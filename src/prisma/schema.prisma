@@ -1,0 +1,29 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+// prisma repo generator
+model User {
+  id        String           @id @default(uuid())
+  username  String           @unique
+  email     String           @unique
+  password  String
+  firstName String?
+  lastName  String?
+  role String
+}
+
+model Initiative {
+  id        String           @id @default(uuid())
+  title String 
+  description String
+  excerpt   String
+  location String
+  actionDate DateTime
+}
