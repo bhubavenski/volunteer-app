@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
-import { Roboto } from 'next/font/google';
-import Footer from './(root)/components/Footer';
-import Header from './(root)/components/Header';
+import { League_Spartan, Roboto } from 'next/font/google';
+import Footer from './(main)/components/Footer';
+import Header from './(main)/components/Header';
 import { Toaster } from '@/components/ui/toaster';
 import BackToTop from '@/components/BackToTop';
 import { AuthProvider } from '@/contexts/AuthProvider';
@@ -11,6 +11,12 @@ import { AuthProvider } from '@/contexts/AuthProvider';
 const roboto = Roboto({
   weight: '400',
   subsets: ['latin'],
+});
+
+const spartan = League_Spartan({
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-spartan',
 });
 
 export const metadata: Metadata = {
@@ -27,7 +33,7 @@ export default function RootLayout({
     <>
       <html lang="en" suppressHydrationWarning>
         <head />
-        <body className={roboto.className}>
+        <body className={`${roboto.className} ${spartan.variable}`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -35,9 +41,9 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <AuthProvider>
-              <div className="flex flex-col min-h-screen isolate">
+              <div className="flex flex-col min-h-screen font-spartan isolate card-bg">
                 <Header />
-                <main className="flex-grow">{children}</main>
+                <main className="flex-grow px-6">{children}</main>
                 <Footer />
               </div>
               <Toaster />

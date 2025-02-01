@@ -35,3 +35,7 @@ export function validateSchema<T>(
 
   return { data: result.data };
 }
+
+export function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

@@ -10,20 +10,41 @@ generator client {
 
 // prisma repo generator
 model User {
-  id        String           @id @default(uuid())
-  username  String           @unique
-  email     String           @unique
-  password  String
-  firstName String?
-  lastName  String?
-  role String
+  id           String      @id @default(uuid())
+  username     String      @unique
+  email        String      @unique
+  password     String
+  firstName    String?
+  lastName     String?
+  role         String
+  Initiative   Initiative? @relation(fields: [initiativeId], references: [id])
+  initiativeId String?
 }
 
 model Initiative {
-  id        String           @id @default(uuid())
-  title String 
-  description String
-  excerpt   String
-  location String
-  actionDate DateTime
+  id           String     @id @default(uuid())
+  title        String
+  description  String
+  excerpt      String
+  location     String
+  actionDate   DateTime
+  categories   Category[] @relation("InitiativeCategories")
+  participants User[]
+  mapEmbedUrl  String?
 }
+
+model Category {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  initiatives Initiative[] @relation("InitiativeCategories")
+}
+
+// model InitiativeOnCategory {
+//   initiative   Initiative @relation(fields: [initiativeId], references: [id])
+//   initiativeId String
+
+//   category   Category @relation(fields: [categoryId], references: [id])
+//   categoryId String
+
+//   @@id([initiativeId, categoryId])
+// }
