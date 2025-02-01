@@ -5,14 +5,14 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from '@/components/ui/carousel';
+import { Initiative } from '@prisma/client';
 import Image from 'next/image';
 import React from 'react';
-import { InitiativeProps } from '../page';
 
 export default function CarouselCard({
   initiative,
 }: {
-  initiative: InitiativeProps;
+  initiative: Initiative;
 }) {
   return (
     <Carousel className="w-full max-w-2xl mx-auto relative rounded-lg overflow-hidden">

@@ -1,14 +1,13 @@
 import { DefaultSession, NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-// import { UserRepo } from '@/repository/user.repo';
 import { User as PrismaUser } from '@prisma/client';
 import { SignInFormSchema } from '@/schemas/forms/SignInFormSchema';
-import { db } from '@/prisma/db';
 import { AppLinks } from '@/constants/AppLinks';
+import { prisma } from '@/lib/prisma';
 
 export const authOptions: NextAuthOptions = {
-  debug: process.env.NODE_ENV !== "production",
+  debug: process.env.NODE_ENV !== 'production',
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60,
@@ -32,7 +31,7 @@ export const authOptions: NextAuthOptions = {
         let user = null;
 
         try {
-          user = (await db.user.findUnique({
+          user = (await prisma.user.findUnique({
             where: { email },
           })) as PrismaUser & { rememberMe: boolean };
         } catch {
@@ -42,12 +41,12 @@ export const authOptions: NextAuthOptions = {
         if (!user) {
           throw new Error("This user doesn't exists");
         }
-     
+
         const isTheSamePass = await bcrypt.compare(password, user.password);
-        
+
         if (!isTheSamePass) {
           throw new Error('Wrong credentials');
-        } 
+        }
 
         user.rememberMe = rememberMe;
         return user;

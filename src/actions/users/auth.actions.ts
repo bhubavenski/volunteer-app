@@ -3,9 +3,9 @@
 import bcrypt from 'bcryptjs';
 import { getErrorMessage, validateSchema } from '@/lib/utils';
 import { SignUpValues, SignUpSchema } from '@/schemas/forms/SignUpFormSchema';
-import { db } from '@/prisma/db';
 import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import { getServerSession } from 'next-auth';
+import { prisma } from '@/lib/prisma';
 
 export async function registerUser(body: SignUpValues) {
   const validatedFields = validateSchema(SignUpSchema, body);
@@ -19,7 +19,7 @@ export async function registerUser(body: SignUpValues) {
   const { email, password, username, role } = validatedFields.data;
 
   try {
-    const existsUser = await db.user.findUnique({
+    const existsUser = await prisma.user.findUnique({
       where: {
         email: email,
       },
@@ -31,7 +31,7 @@ export async function registerUser(body: SignUpValues) {
 
     const hashedPass = await bcrypt.hash(password, 10);
 
-    await db.user.create({
+    await prisma.user.create({
       data: {
         email,
         password: hashedPass,
@@ -53,7 +53,7 @@ export const deleteUser = async () => {
   }
 
   try {
-    await db.user.delete({
+    await prisma.user.delete({
       where: {
         email: session.user.email,
       },

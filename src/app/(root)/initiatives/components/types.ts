@@ -1,8 +1,7 @@
-export interface Initiative {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  location: string;
-  category: string;
-}
+import { Prisma } from "@prisma/client";
+
+export type InitiativeWithCategory = Prisma.InitiativeGetPayload<{
+  include: {
+    category: true;
+  };
+}>;

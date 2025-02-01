@@ -9,29 +9,26 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Initiative } from './types';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { InitiativeWithCategory } from './types';
 
 export default function Filters({
   initiatives,
   setFilteredInitiatives,
 }: {
-  initiatives: Initiative[];
-  setFilteredInitiatives: Dispatch<SetStateAction<Initiative[]>>;
+  initiatives: InitiativeWithCategory[];
+  setFilteredInitiatives: Dispatch<SetStateAction<InitiativeWithCategory[]>>;
 }) {
   const [locationFilter, setLocationFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
-  const locations = Array.from(new Set(initiatives.map((i) => i.location)));
-  const categories = Array.from(new Set(initiatives.map((i) => i.category)));
-
   const handleFilter = () => {
     const filtered = initiatives.filter((initiative) => {
       return (
         (locationFilter === 'all' || initiative.location === locationFilter) &&
-        (dateFilter === '' || initiative.date >= dateFilter) &&
+        (dateFilter === '' || initiative.createdAt.toISOString() >= dateFilter) &&
         (categoryFilter === 'all' || initiative.category === categoryFilter)
       );
     });

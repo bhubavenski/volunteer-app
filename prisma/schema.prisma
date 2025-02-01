@@ -12,3 +12,32 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String  @id @default(uuid())
+  username  String  @unique
+  email     String  @unique
+  password  String
+  firstName String?
+  lastName  String?
+  role      String
+}
+
+model Initiative {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  excerpt     String
+  location    String
+  scheduledDate  DateTime
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  participants Int
+  images //to be implemented
+}
+
+model Category {
+  id         String       @id @default(uuid())
+  title      String
+  Initiative Initiative[]
+}

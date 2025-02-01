@@ -12,12 +12,12 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import React, { useState } from 'react';
-import { InitiativeProps } from '../page';
+import { Initiative } from '@prisma/client';
 
 export default function SignUpVolunteer({
   initiative,
 }: {
-  initiative: InitiativeProps;
+  initiative: Initiative;
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [name, setName] = useState('');
