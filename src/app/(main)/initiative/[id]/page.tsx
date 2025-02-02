@@ -23,12 +23,14 @@ export type InitiativeWithParticipantsCount = Prisma.InitiativeGetPayload<{
 export default async function InitiativePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
+
   const initiative: InitiativeWithParticipantsCount | null =
     await db.initiative.findUnique({
       where: {
-        id: params.id,
+        id,
       },
       select: {
         title: true,

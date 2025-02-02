@@ -19,8 +19,8 @@ export default function SignupSection() {
   return (
     <section id="signup" className="-mx-6 py-16 bg-muted">
       <div className="container mx-auto max-w-md">
-        <h2 className="text-3xl text-center mb-2">Ти си инициатор?</h2>
-        <h3 className="text-xl font-semibold text-center mb-8">Запиши се сега</h3>
+        <h2 className="text-3xl text-center mb-2">Are you the initiator?</h2>
+        <h3 className="text-xl font-semibold text-center mb-8">Sign up now!</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             type="text"
@@ -42,7 +42,7 @@ export default function SignupSection() {
             onChange={(e) => setMessage(e.target.value)}
           />
           <Button type="submit" className="w-full">
-            Изпрати
+            Send
           </Button>
         </form>
       </div>

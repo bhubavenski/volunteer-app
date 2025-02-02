@@ -11,6 +11,7 @@ export default {
     extend: {
       fontFamily: {
         spartan: ['var(--font-spartan)'],
+        lexend: ['var(--font-lexend)']
       },
       colors: {
         background: 'hsl(var(--background))',

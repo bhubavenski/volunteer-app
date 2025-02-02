@@ -12,18 +12,17 @@ export default function LandingSection() {
     >
       <div className="container mx-auto text-center">
         <h2 className="text-4xl font-bold mb-4">
-          Направи света по-добър с нас!
+          Make the world a better place with us!
         </h2>
         <p className="text-xl mb-8">
-          Открий вдъхновяващи доброволчески програми и се присъедини към нашата
-          общност.
+          Discover inspiring volunteer programs and join our community.
         </p>
         <Link href={AppLinks.INITIATIVES_LIST}>
           <Button
             size="lg"
             className="bg-gradient-to-r from-purple-600 to-blue-600 text-white text-lg"
           >
-            Разгледай програмите
+            View programs
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>

@@ -1,13 +1,12 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Form,
   FormControl,
@@ -16,91 +15,109 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { toast } from "@/components/ui/use-toast"
+} from '@/components/ui/form';
+import { toast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
+import Tiptap from '@/components/TipTap';
 
 const formSchema = z.object({
   title: z.string().min(5, {
-    message: "Заглавието трябва да бъде поне 5 символа.",
+    message: 'The title must be at least 5 characters long.',
   }),
   description: z.string().min(20, {
-    message: "Описанието трябва да бъде поне 20 символа.",
+    message: 'The description must be at least 20 characters long.',
   }),
-  date: z.string().refine((date) => {
-    const selectedDate = new Date(date);
-    const today = new Date();
-    return selectedDate > today;
-  }, {
-    message: "Датата трябва да бъде в бъдещето.",
-  }),
+  date: z.string().refine(
+    (date) => {
+      const selectedDate = new Date(date);
+      const today = new Date();
+      return selectedDate > today;
+    },
+    {
+      message: 'The date must be in the future.',
+    }
+  ),
   time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
-    message: "Моля, въведете валидно време (ЧЧ:ММ).",
+    message: 'Please enter a valid time (HH:MM).',
   }),
   location: z.string().min(3, {
-    message: "Локацията трябва да бъде поне 3 символа.",
+    message: 'The location must be at least 3 characters long.',
   }),
+  mapEmbedUrl: z
+    .string()
+    .min(20, {
+      message: 'The url must be at least 20 characters long.',
+    })
+    .url({
+      message: 'Please provide a valid URL.',
+    }),
   category: z.string().min(3, {
-    message: "Категорията трябва да бъде поне 3 символа.",
+    message: 'The category must be at least 3 characters long.',
   }),
   maxParticipants: z.number().min(1, {
-    message: "Трябва да има поне 1 участник.",
+    message: 'There must be at least 1 participant.',
   }),
-})
+});
 
 export function CreateInitiativeForm() {
-  const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      date: "",
-      time: "",
-      location: "",
-      category: "",
+      title: '',
+      description: '',
+      date: '',
+      time: '',
+      location: '',
+      mapEmbedUrl: '',
+      category: '',
       maxParticipants: 1,
     },
-  })
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      // Симулираме заявка към сървъра
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
       toast({
-        title: "Инициативата е създадена успешно!",
-        description: "Новата инициатива беше добавена в системата.",
-      })
+        title: 'The initiative was successfully created!',
+        description: 'The new initiative has been added to the system.',
+      });
+      console.log(values);
 
-      router.push("/admin/initiatives")
-    } catch (error) {
+      // add post query to server
+
+      router.push('/admin/initiatives');
+    } catch (error: unknown) {
+      console.log(getErrorMessage(error));
       toast({
-        title: "Грешка при създаване на инициативата",
-        description: "Моля, опитайте отново по-късно.",
-        variant: "destructive",
-      })
+        title: 'Error creating the initiative',
+        description: 'Please try again later.',
+        variant: 'destructive',
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit, (err) =>
+          console.log('err happened on submit -', err)
+        )}
+        className="space-y-8"
+      >
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Заглавие</FormLabel>
+              <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input placeholder="Въведете заглавие на инициативата" {...field} />
+                <Input placeholder="Add title to initiative" {...field} />
               </FormControl>
               <FormDescription>
-                Кратко и ясно заглавие на инициативата.
+                Short and clear title of the initiative.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -111,16 +128,13 @@ export function CreateInitiativeForm() {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Описание</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Опишете инициативата подробно"
-                  className="resize-none"
-                  {...field}
-                />
+              <FormLabel>Description</FormLabel>
+              <FormControl className="size-[500px] flex flex-col justify-stretch gap-2">
+                <Tiptap value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormDescription>
-                Подробно описание на целите и дейностите на инициативата.
+                Detailed description of the goals and activities of the
+                initiative.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -132,7 +146,7 @@ export function CreateInitiativeForm() {
             name="date"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Дата</FormLabel>
+                <FormLabel>Date</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
@@ -145,7 +159,7 @@ export function CreateInitiativeForm() {
             name="time"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Време</FormLabel>
+                <FormLabel>Time</FormLabel>
                 <FormControl>
                   <Input type="time" {...field} />
                 </FormControl>
@@ -159,9 +173,25 @@ export function CreateInitiativeForm() {
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Локация</FormLabel>
+              <FormLabel>Location</FormLabel>
               <FormControl>
-                <Input placeholder="Въведете локация на инициативата" {...field} />
+                <Input
+                  placeholder="Enter location of the initiative"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="mapEmbedUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Map</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter url of the map" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -172,9 +202,12 @@ export function CreateInitiativeForm() {
           name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Категория</FormLabel>
+              <FormLabel>Category</FormLabel>
               <FormControl>
-                <Input placeholder="Въведете категория на инициативата" {...field} />
+                <Input
+                  placeholder="Enter category of the initiative"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -185,19 +218,23 @@ export function CreateInitiativeForm() {
           name="maxParticipants"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Максимален брой участници</FormLabel>
+              <FormLabel>Maximum number of participants</FormLabel>
               <FormControl>
-                <Input type="number" min={1} {...field} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
+                <Input
+                  type="number"
+                  min={1}
+                  {...field}
+                  onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Създаване..." : "Създай инициатива"}
+          {isSubmitting ? 'Creating...' : 'Create initiative'}
         </Button>
       </form>
     </Form>
-  )
+  );
 }
-
