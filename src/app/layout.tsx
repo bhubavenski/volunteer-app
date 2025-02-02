@@ -7,6 +7,7 @@ import Header from './(main)/components/Header';
 import { Toaster } from '@/components/ui/toaster';
 import BackToTop from '@/components/BackToTop';
 import { AuthProvider } from '@/contexts/AuthProvider';
+import NextTopLoader from 'nextjs-toploader';
 
 const roboto = Roboto({
   weight: '400',
@@ -41,6 +42,8 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <head />
         <body className={`${roboto.className} ${spartan.variable} ${lexend.className}`}>
+        <NextTopLoader />
+         
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

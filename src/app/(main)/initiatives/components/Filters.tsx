@@ -57,16 +57,16 @@ export default function Filters() {
   return (
     <>
       <div>
-        <Label htmlFor="location">Локация</Label>
+        <Label htmlFor="location">Location</Label>
         <Select
           value={filters.location}
           onValueChange={(value) => setFilters({ ...filters, location: value })}
         >
           <SelectTrigger id="location">
-            <SelectValue placeholder="Избери локация" />
+            <SelectValue placeholder="Select location" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="/">Всички</SelectItem>
+            <SelectItem value="/">All</SelectItem>
             {locations.length ? (
               locations.map((location) => (
                 <SelectItem key={location} value={location}>
@@ -82,7 +82,7 @@ export default function Filters() {
         </Select>
       </div>
       <div>
-        <Label htmlFor="actionDate">Дата (от)</Label>
+        <Label htmlFor="actionDate">Date (from)</Label>
         <Input
           id="actionDate"
           type="date"
@@ -93,25 +93,25 @@ export default function Filters() {
         />
       </div>
       <div>
-        {/* <Label htmlFor="category">Категория</Label>
-        <Select value={filters.categories} onValueChange={setCategoryFilter}>
-          <SelectTrigger id="category">
-            <SelectValue placeholder="Избери категория" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Всички</SelectItem>
-            {categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select> */}
+        {/* <Label htmlFor="category">Category</Label>
+      <Select value={filters.categories} onValueChange={setCategoryFilter}>
+        <SelectTrigger id="category">
+          <SelectValue placeholder="Select category" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All</SelectItem>
+          {categories.map((category) => (
+            <SelectItem key={category} value={category}>
+              {category}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select> */}
       </div>
       <div className="flex items-end gap-2">
-        <Button onClick={handleFilter}>Филтрирай</Button>
+        <Button onClick={handleFilter}>Filter</Button>
         <Button variant="outline" onClick={clearFilters}>
-          Изчисти
+          Clear
         </Button>
       </div>
     </>
