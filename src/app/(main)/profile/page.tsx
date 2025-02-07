@@ -1,13 +1,10 @@
-import ProfileAdditionalOptions from "./components/ProfileAdditionalOptions";
-import ProfileTabs from "./components/ProfileAdditionalOptions";
+import Settings from "./components/Settings";
 
 export default function ProfileManager() {
   return (
-    <main className="mt-8">
-      <ProfileTabs />
-
+    <main className="mt-8 max-w-[1000px] m-auto">
       <div className="mt-8 space-y-4">
-        <ProfileAdditionalOptions />
+        <Settings />
       </div>
     </main>
   );

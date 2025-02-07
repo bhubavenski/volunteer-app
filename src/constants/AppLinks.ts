@@ -4,4 +4,5 @@ export enum AppLinks {
   SIGN_IN = '/auth/sign-in',
   SIGN_UP = '/auth/sign-up',
   INITIATIVES_LIST = '/initiatives',
+  CREATE_INITIATIVE = '/initiatives/create',
 }

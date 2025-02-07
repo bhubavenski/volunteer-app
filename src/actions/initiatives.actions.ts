@@ -2,8 +2,11 @@
 
 import { InitiativesPageSearchParams } from '@/app/(main)/initiatives/page';
 import { db } from '@/prisma/db';
+import { Prisma } from '@prisma/client';
 
-export async function getInitiatives(filters?: Partial<InitiativesPageSearchParams>) {
+export async function getInitiatives(
+  filters?: Partial<InitiativesPageSearchParams>
+) {
   const initiatives = await db.initiative.findMany({
     where: {
       location: filters?.location,
@@ -34,4 +37,10 @@ export async function getUniqueLocations() {
   });
 
   return locations.map((initiative) => initiative.location);
+}
+
+export async function createInitiative(
+  initiative: Prisma.InitiativeCreateArgs
+) {
+  await db.initiative.create(initiative);
 }

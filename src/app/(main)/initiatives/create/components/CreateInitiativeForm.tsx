@@ -19,6 +19,15 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
 import Tiptap from '@/components/TipTap';
+import { sendImageToDiscord } from '@/lib/discord';
+import UploadImage from './UploadImage';
+import { CategoriesInput } from './CategoriesInput';
+
+interface UploadedImage {
+  id: string;
+  url: string;
+  type: string;
+}
 
 const formSchema = z.object({
   title: z.string().min(5, {
@@ -51,9 +60,15 @@ const formSchema = z.object({
     .url({
       message: 'Please provide a valid URL.',
     }),
-  category: z.string().min(3, {
-    message: 'The category must be at least 3 characters long.',
-  }),
+  categories: z
+    .array(
+      z.string().min(3, {
+        message: 'The category must be at least 3 characters long.',
+      })
+    )
+    .refine((data) => data.length > 0, {
+      message: 'At least one category is required.',
+    }),
   maxParticipants: z.number().min(1, {
     message: 'There must be at least 1 participant.',
   }),
@@ -62,6 +77,10 @@ const formSchema = z.object({
 export function CreateInitiativeForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -76,6 +95,10 @@ export function CreateInitiativeForm() {
     },
   });
 
+  const handleCategoriesChange = (newCategories: string[]) => {
+    setCategories(newCategories);
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
@@ -85,8 +108,30 @@ export function CreateInitiativeForm() {
       });
       console.log(values);
 
-      // add post query to server
+      await Promise.all(
+        uploadedImages.map(async (image) => {
+          const response = await fetch(image.url);
+          const blob = await response.blob();
 
+          const file = new File([blob], 'image.jpg', { type: image.type });
+
+          return sendImageToDiscord({ imageFile: file });
+        })
+      );
+      const initiative = {
+        title: values.title,
+        description: values.description,
+        // excerpt     : values.excerpt
+        location: values.location,
+        // actionDate  : values.actionDate
+        categories: values.categories,
+        participants: values.maxParticipants,
+        mapEmbedUrl: values.mapEmbedUrl,
+        // imagesUrls  : values
+      };
+      // await createInitiative({
+      //   data:
+      // })
       router.push('/admin/initiatives');
     } catch (error: unknown) {
       console.log(getErrorMessage(error));
@@ -99,6 +144,7 @@ export function CreateInitiativeForm() {
       setIsSubmitting(false);
     }
   }
+
   return (
     <Form {...form}>
       <form
@@ -107,6 +153,12 @@ export function CreateInitiativeForm() {
         )}
         className="space-y-8"
       >
+        <UploadImage
+          error={error}
+          setError={setError}
+          setUploadedImages={setUploadedImages}
+          uploadedImages={uploadedImages}
+        />
         <FormField
           control={form.control}
           name="title"
@@ -199,13 +251,13 @@ export function CreateInitiativeForm() {
         />
         <FormField
           control={form.control}
-          name="category"
+          name="categories"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>Categories</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter category of the initiative"
+                <CategoriesInput
+                  onCategoriesChange={handleCategoriesChange}
                   {...field}
                 />
               </FormControl>

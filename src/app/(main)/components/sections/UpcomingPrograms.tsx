@@ -1,33 +1,21 @@
 import React from 'react';
 import { ProgramCard } from '../program-card';
+import { db } from '@/prisma/db';
 
-export default function UpcomingPrograms() {
-  const programs = [
-    {
-      title: "Почистване на парк 'Витоша'",
-      description:
-        'Помогнете за опазването на природата в най-големия парк на София.',
-      date: '15 Юни 2025',
-      location: 'София, България',
-      imageUrl: '/landing-page/volunteer-group-1.jpg',
+export default async function UpcomingPrograms() {
+  const programs = await db.initiative.findMany({
+    orderBy: {
+      actionDate: 'desc',
     },
-    {
-      title: 'Помощ в дом за възрастни хора',
-      description:
-        'Прекарайте време с възрастни хора и им помогнете в ежедневните дейности.',
-      date: '20 Юни 2025',
-      location: 'Пловдив, България',
-      imageUrl: '/landing-page/volunteer-group-2.jpg',
-    },
-    {
-      title: 'Образователен семинар за деца',
-      description:
-        'Проведете интерактивен урок по наука за деца от местното училище.',
-      date: '1 Юли 2025',
-      location: 'Варна, България',
-      imageUrl: '/landing-page/volunteer-group-3.jpg',
-    },
-  ];
+    take: 3,
+    select: {
+      actionDate: true,
+      location: true,
+      title: true,
+      excerpt: true,
+    }
+  });
+  
   return (
     <section className="py-16 -mx-6 bg-muted">
       <div className="container mx-auto">
@@ -36,7 +24,7 @@ export default function UpcomingPrograms() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {programs.map((program, index) => (
-            <ProgramCard key={index} {...program} />
+            <ProgramCard key={index} initiative={program} />
           ))}
         </div>
       </div>

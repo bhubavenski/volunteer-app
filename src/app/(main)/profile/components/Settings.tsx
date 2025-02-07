@@ -6,12 +6,13 @@ import { signOut } from 'next-auth/react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { deleteUser } from '@/actions/users/auth.actions';
+import { Toast, useToastContext } from '@/contexts/ToastContext';
 
 type ProfileAdditionalOptionsProps = {
   onDelete?: (toast: Toast) => Promise<Toast>;
 };
 
-export default function ProfileAdditionalOptions({
+export default function Settings({
   onDelete,
 }: ProfileAdditionalOptionsProps) {
   const toast = useToastContext();
@@ -33,7 +34,7 @@ export default function ProfileAdditionalOptions({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Additional Options</CardTitle>
+        <CardTitle>Settings</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <Button variant="outline" className="w-full justify-start">
