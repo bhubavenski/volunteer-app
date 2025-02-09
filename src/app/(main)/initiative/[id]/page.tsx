@@ -3,6 +3,7 @@ import LocationCard from '@/app/(main)/initiative/[id]/components/LocationCard';
 import DetailsCard from '@/app/(main)/initiative/[id]/components/DetailsCard';
 import { db } from '@/prisma/db';
 import { notFound } from 'next/navigation';
+import CarouselCard from './components/CarouselCard';
 import { Prisma } from '@prisma/client';
 
 export type InitiativeWithParticipantsCount = Prisma.InitiativeGetPayload<{
@@ -12,6 +13,7 @@ export type InitiativeWithParticipantsCount = Prisma.InitiativeGetPayload<{
     description: true;
     location: true;
     mapEmbedUrl: true;
+    imagesUrls: true;
     _count: {
       select: {
         participants: true;
@@ -27,24 +29,24 @@ export default async function InitiativePage({
 }) {
   const { id } = await params;
 
-  const initiative: InitiativeWithParticipantsCount | null =
-    await db.initiative.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        title: true,
-        actionDate: true,
-        description: true,
-        location: true,
-        mapEmbedUrl: true,
-        _count: {
-          select: {
-            participants: true,
-          },
+  const initiative = await db.initiative.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      title: true,
+      actionDate: true,
+      description: true,
+      location: true,
+      mapEmbedUrl: true,
+      imagesUrls: true,
+      _count: {
+        select: {
+          participants: true,
         },
       },
-    });
+    },
+  });
 
   if (!initiative) {
     notFound();
@@ -54,7 +56,7 @@ export default async function InitiativePage({
     <div className="container space-y-7 items-center max-w-[1000px] mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6">{initiative.title}</h1>
 
-      {/* <CarouselCard initiative={initiative} /> */}
+      <CarouselCard images={initiative.imagesUrls} />
 
       <DetailsCard initiative={initiative} />
 

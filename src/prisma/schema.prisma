@@ -8,7 +8,11 @@ generator client {
   previewFeatures = ["fullTextSearch"]
 }
 
-// prisma repo generator
+enum Role {
+  ADMIN
+  INITIATOR
+  USER
+}
 model User {
   id           String      @id @default(uuid())
   username     String      @unique
@@ -16,7 +20,7 @@ model User {
   password     String
   firstName    String?
   lastName     String?
-  role         String
+  role         Role
   Initiative   Initiative? @relation(fields: [initiativeId], references: [id])
   initiativeId String?
 }

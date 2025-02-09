@@ -22,6 +22,10 @@ import Tiptap from '@/components/TipTap';
 import { sendImageToDiscord } from '@/lib/discord';
 import UploadImage from './UploadImage';
 import { CategoriesInput } from './CategoriesInput';
+import { Prisma } from '@prisma/client';
+import { createInitiative } from '@/actions/initiatives.actions';
+import { createCategory } from '@/actions/categories.actions';
+import { AppLinks } from '@/constants/AppLinks';
 
 interface UploadedImage {
   id: string;
@@ -32,6 +36,9 @@ interface UploadedImage {
 const formSchema = z.object({
   title: z.string().min(5, {
     message: 'The title must be at least 5 characters long.',
+  }),
+  excerpt: z.string().min(5, {
+    message: 'The excerpt must be at least 15 characters long.',
   }),
   description: z.string().min(20, {
     message: 'The description must be at least 20 characters long.',
@@ -59,13 +66,18 @@ const formSchema = z.object({
     })
     .url({
       message: 'Please provide a valid URL.',
-    }),
+    })
+    .optional()
+    .or(z.literal('')),
   categories: z
     .array(
       z.string().min(3, {
         message: 'The category must be at least 3 characters long.',
       })
     )
+    .max(4, {
+      message: 'The categories must not be longer than 4',
+    })
     .refine((data) => data.length > 0, {
       message: 'At least one category is required.',
     }),
@@ -79,36 +91,27 @@ export function CreateInitiativeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
+      excerpt: '',
       description: '',
       date: '',
       time: '',
       location: '',
       mapEmbedUrl: '',
-      category: '',
+      categories: [],
       maxParticipants: 1,
     },
   });
 
-  const handleCategoriesChange = (newCategories: string[]) => {
-    setCategories(newCategories);
-  };
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
-      toast({
-        title: 'The initiative was successfully created!',
-        description: 'The new initiative has been added to the system.',
-      });
-      console.log(values);
-
-      await Promise.all(
+      // images, categories and initiative must be in transactions
+      const imagesUrls: string[] = await Promise.all(
         uploadedImages.map(async (image) => {
           const response = await fetch(image.url);
           const blob = await response.blob();
@@ -118,21 +121,48 @@ export function CreateInitiativeForm() {
           return sendImageToDiscord({ imageFile: file });
         })
       );
-      const initiative = {
+
+      const initiativeTemplate: Prisma.InitiativeCreateInput = {
         title: values.title,
         description: values.description,
-        // excerpt     : values.excerpt
+        excerpt: values.excerpt,
         location: values.location,
-        // actionDate  : values.actionDate
-        categories: values.categories,
-        participants: values.maxParticipants,
+        actionDate: new Date(`${values.date}T${values.time}`),
         mapEmbedUrl: values.mapEmbedUrl,
-        // imagesUrls  : values
+        imagesUrls: imagesUrls,
       };
-      // await createInitiative({
-      //   data:
-      // })
-      router.push('/admin/initiatives');
+
+      const categoriesIds = await Promise.all(
+        values.categories.map((category) =>
+          createCategory({
+            data: { name: category },
+            select: {
+              id: true,
+            },
+          })
+        )
+      );
+
+      const initiative = await createInitiative({
+        data: {
+          ...initiativeTemplate,
+          categories: {
+            connect: categoriesIds.map((category) => ({
+              id: category.id,
+            })),
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      toast({
+        title: 'The initiative was successfully created!',
+        description: 'The new initiative has been added to the system.',
+      });
+
+      router.push(`${AppLinks.INITIATIVES_LIST}/${initiative.id}`);
     } catch (error: unknown) {
       console.log(getErrorMessage(error));
       toast({
@@ -170,6 +200,22 @@ export function CreateInitiativeForm() {
               </FormControl>
               <FormDescription>
                 Short and clear title of the initiative.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="excerpt"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Excerpt</FormLabel>
+              <FormControl>
+                <Input placeholder="Add excerpt to initiative" {...field} />
+              </FormControl>
+              <FormDescription>
+                Short and clear excerpt of the initiative.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -257,7 +303,8 @@ export function CreateInitiativeForm() {
               <FormLabel>Categories</FormLabel>
               <FormControl>
                 <CategoriesInput
-                  onCategoriesChange={handleCategoriesChange}
+                  categories={field.value}
+                  setCategories={field.onChange}
                   {...field}
                 />
               </FormControl>

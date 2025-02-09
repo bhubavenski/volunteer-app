@@ -2,12 +2,10 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { CalendarIcon, MapPinIcon } from 'lucide-react'
 import Link from 'next/link'
+import { AppLinks } from "@/constants/AppLinks"
 
 interface Initiative {
   id: string
@@ -63,30 +61,6 @@ const initiatives: Initiative[] = [
 
 export default function InitiativesList() {
   const [filteredInitiatives, setFilteredInitiatives] = useState<Initiative[]>(initiatives)
-  const [locationFilter, setLocationFilter] = useState("all")
-  const [dateFilter, setDateFilter] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-
-  const locations = Array.from(new Set(initiatives.map(i => i.location)))
-  const categories = Array.from(new Set(initiatives.map(i => i.category)))
-
-  const handleFilter = () => {
-    const filtered = initiatives.filter(initiative => {
-      return (
-        (locationFilter === "all" || initiative.location === locationFilter) &&
-        (dateFilter === "" || initiative.date >= dateFilter) &&
-        (categoryFilter === "all" || initiative.category === categoryFilter)
-      )
-    })
-    setFilteredInitiatives(filtered)
-  }
-
-  const clearFilters = () => {
-    setLocationFilter("all")
-    setDateFilter("")
-    setCategoryFilter("all")
-    setFilteredInitiatives(initiatives)
-  }
 
   return (
     <div className="space-y-8">
@@ -113,7 +87,7 @@ export default function InitiativesList() {
               <div className="mt-2 text-sm font-medium">{initiative.category}</div>
             </CardContent>
             <CardFooter>
-              <Link href={`/initiative/${initiative.id}`} className="w-full">
+              <Link href={`${AppLinks.INITIATIVES_LIST}/${initiative.id}`} className="w-full">
                 <Button className="w-full">Детайли</Button>
               </Link>
             </CardFooter>

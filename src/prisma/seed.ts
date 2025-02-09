@@ -1,5 +1,6 @@
 import { Category, PrismaClient } from '@prisma/client';
 import { users, categories, initiatives } from '../constants/seed.constants';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -9,7 +10,7 @@ async function seedUsers() {
     await prisma.user.upsert({
       where: { email: user.email },
       update: {},
-      create: user,
+      create: { ...user, password: await bcrypt.hash(user.password, 10) },
     });
   }
   console.log('Users seeded.');

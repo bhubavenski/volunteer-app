@@ -3,7 +3,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { League_Spartan, Roboto, Lexend } from 'next/font/google';
 import Footer from './(main)/components/Footer';
-import Header from './(main)/components/Header';
+import Header from './(main)/components/header/Header';
 import { Toaster } from '@/components/ui/toaster';
 import BackToTop from '@/components/BackToTop';
 import { AuthProvider } from '@/contexts/AuthProvider';
@@ -54,9 +54,9 @@ export default function RootLayout({
           >
             <AuthProvider>
               <ToastContextProvider>
-                <div className="flex flex-col min-h-screen font-lexend isolate card-bg">
+                <div className="flex relative flex-col min-h-screen font-lexend isolate card-bg">
                   <Header />
-                  <main className="flex-grow px-6">{children}</main>
+                  <main className="flex-grow px-6 isolate">{children}</main>
                   <Footer />
                 </div>
               </ToastContextProvider>

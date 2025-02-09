@@ -20,12 +20,12 @@ const BackToTop = () => {
       if (!button) return;
 
       if (window.scrollY > window.innerHeight) {
-        if (button.classList.contains('hidden')) {
-          button.classList.remove('hidden');
+        if (button.classList.contains('opacity-0')) {
+          button.classList.remove('opacity-0');
         }
       } else {
-        if (!button.classList.contains('hidden')) {
-          button.classList.add('hidden');
+        if (!button.classList.contains('opacity-0')) {
+          button.classList.add('opacity-0');
         }
       }
     };

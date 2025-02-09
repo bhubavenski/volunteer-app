@@ -1,23 +1,23 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 
 export const users: Prisma.UserCreateInput[] = [
   {
     username: 'user1',
     email: 'email1@gmail.com',
     password: '1111',
-    role: '',
+    role: Role.USER,
   },
   {
     username: 'user2',
     email: 'email2@gmail.com',
     password: '2222',
-    role: '',
+    role: Role.INITIATOR,
   },
   {
     username: 'user3',
     email: 'email3@gmail.com',
     password: '3333',
-    role: '',
+    role: Role.ADMIN,
   },
 ];
 
@@ -36,6 +36,9 @@ export const initiatives: Prisma.InitiativeCreateInput[] = [
     location: 'Sofia, Bulgaria',
     actionDate: new Date(),
     excerpt: 'Empowering the next generation with coding skills.',
+    imagesUrls: [
+      'https://cdn.discordapp.com/attachments/1337452885281079348/1337454472611500032/9c8449_6b2e7cd74e984356a17197a0616ea5d5mv2.webp?ex=67a7810a&is=67a62f8a&hm=825d9db76bbc31e4ea063bfbb56fb9cb71b3f7af41a6e7e7e1b0e0609b373514&',
+    ],
     mapEmbedUrl:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2932.3169079185163!2d23.320746975848106!3d42.69701007116366!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40aa856ef31b5283%3A0x6dc52c4a01d5d5b8!2z0KHQvtGE0LjRjyDRhtC10L3RgtGK0YAsIDEwMDAg0KHQvtGE0LjRjw!5e0!3m2!1sbg!2sbg!4v1738436349399!5m2!1sbg!2sbg',
   },
@@ -46,6 +49,9 @@ export const initiatives: Prisma.InitiativeCreateInput[] = [
     location: 'Varna, Bulgaria',
     actionDate: new Date(),
     excerpt: 'Join us in keeping our beaches clean and sustainable.',
+    imagesUrls: [
+      'https://cdn.discordapp.com/attachments/1337452885281079348/1337454473743826944/Homepage3__2400x754.jpg?ex=67a7810b&is=67a62f8b&hm=8f8a7686f4cfb0776af3bc7bb11225b489b9faf7877851cac16f36cf1ee4a125&',
+    ],
     mapEmbedUrl:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2932.255472258887!2d23.324756375848132!3d42.69831107116349!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40aa856fae303b0d%3A0xfe3a587a59feb252!2z0JDQv9GC0LXQutCwINCc0LXQtNC10Y8gLSDQlNC-0L3QtNGD0LrQvtCy!5e0!3m2!1sbg!2sbg!4v1738436591034!5m2!1sbg!2sbg',
   },
@@ -56,6 +62,9 @@ export const initiatives: Prisma.InitiativeCreateInput[] = [
     location: 'Plovdiv, Bulgaria',
     actionDate: new Date(),
     excerpt: 'Take action for the environment by planting trees.',
+    imagesUrls: [
+      'https://cdn.discordapp.com/attachments/1337452885281079348/1337454473290715166/f0242497-800px-wm.jpg?ex=67a7810b&is=67a62f8b&hm=de2eb7ca03242f723285fe568510aebb6990a63efabdf6e4081fbe41df249e3b&',
+    ],
     mapEmbedUrl:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2932.316907918515!2d23.320746975848113!3d42.69701007116369!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40aa856ef31b5283%3A0x6dc52c4a01d5d5b8!2z0KHQvtGE0LjRjyDRhtC10L3RgtGK0YAsIDEwMDAg0KHQvtGE0LjRjw!5e0!3m2!1sbg!2sbg!4v1738435549919!5m2!1sbg!2sbg',
   },
@@ -66,6 +75,9 @@ export const initiatives: Prisma.InitiativeCreateInput[] = [
     location: 'Burgas, Bulgaria',
     actionDate: new Date(),
     excerpt: 'Help support and uplift homeless individuals.',
+    imagesUrls: [
+      'https://cdn.discordapp.com/attachments/1337452885281079348/1337454474066657401/images.jpg?ex=67a7810b&is=67a62f8b&hm=b075467f7631b0d9f22d4c35081467a81791078354cb3c9cb221a7947ede7dc9&',
+    ],
     mapEmbedUrl:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2932.316907918517!2d23.343012975848113!3d42.59468907116368!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40aa856fae303b0d%3A0xa0f5a3d45a5d11a2!2z0JTQvtC00L7Qu9Cz0L7QstCw!5e0!3m2!1sbg!2sbg!4v1738435481059!5m2!1sbg!2sbg',
   },

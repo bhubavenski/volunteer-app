@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 import { z } from 'zod';
 
 export const SignUpSchema = z.object({
@@ -5,9 +6,9 @@ export const SignUpSchema = z.object({
   password: z.string().min(1),
   username: z.string().min(1),
   role: z.union([
-    z.literal('user'),
-    z.literal('organizator'),
-    z.literal('admin'),
+    z.literal(Role.USER),
+    z.literal(Role.INITIATOR),
+    z.literal(Role.ADMIN),
   ]),
 });
 

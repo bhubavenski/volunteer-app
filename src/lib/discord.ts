@@ -23,19 +23,15 @@ export async function sendImageToDiscord({
       throw new Error(`Error sending image: ${response.statusText}`);
     }
 
-    // Връщаме само нужната информация
-    console.log({
-      status: response.status,
-      statusText: response.statusText,
-      message: 'Image sent successfully!',
-    });
-    return {
-      status: response.status,
-      statusText: response.statusText,
-      message: 'Image sent successfully!',
-    };
+    const data = await response.json();
+
+    // Discord връща изображенията в attachments
+    const imageUrl = data.attachments?.[0]?.url;
+    if (!imageUrl) throw new Error('No image URL returned from Discord.');
+
+    return imageUrl;
   } catch (error) {
     console.error('Error:', error);
-    throw error; // Връщаме грешката за обработка в компонента
+    throw error;
   }
 }

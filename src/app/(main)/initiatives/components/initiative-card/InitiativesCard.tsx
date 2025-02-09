@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 
 import {
   Card,
@@ -13,14 +13,16 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { InitiativeWithCategories } from '../../page';
+import { AppLinks } from '@/constants/AppLinks';
 
 export default function InitiativeCard({
   initiative,
-}: {
+  ...props
+}: HTMLAttributes<HTMLDivElement> & {
   initiative: InitiativeWithCategories;
 }) {
   return (
-    <Card className="flex flex-col ">
+    <Card className="flex flex-col" {...props}>
       <CardHeader>
         <CardTitle>{initiative.title}</CardTitle>
         <CardDescription>{initiative.excerpt}</CardDescription>
@@ -49,7 +51,10 @@ export default function InitiativeCard({
         </div>
       </CardContent>
       <CardFooter>
-        <Link href={`/initiative/${initiative.id}`} className="w-full">
+        <Link
+          href={`${AppLinks.INITIATIVES_LIST}/${initiative.id}`}
+          className="w-full"
+        >
           <Button className="w-full text-xl">Details</Button>
         </Link>
       </CardFooter>

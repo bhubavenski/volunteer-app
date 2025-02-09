@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
 
         const { email, password, rememberMe } = validatedFields.data;
         let user = null;
-
+        console.log({email, password})
         try {
           user = (await db.user.findUnique({
             where: { email },
@@ -50,6 +50,7 @@ export const authOptions: NextAuthOptions = {
         } 
 
         user.rememberMe = rememberMe;
+        console.log('user in server=', user)
         return user;
       },
     }),
@@ -71,10 +72,10 @@ export const authOptions: NextAuthOptions = {
 
       return token;
     },
-    async session({ session, token }) {
-      session.user.sub = token.sub;
-      return session;
-    },
+    // async session({ session, token }) {
+    //   session.user.sub = token.sub;
+    //   return session;
+    // },
   },
   pages: {
     signIn: AppLinks.SIGN_IN,

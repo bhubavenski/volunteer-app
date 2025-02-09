@@ -1,6 +1,5 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -14,13 +13,14 @@ import { useEffect, useState } from 'react';
 import { InitiativesPageSearchParams } from '../page';
 import { useRouter } from 'next/navigation';
 import { getUniqueLocations } from '@/actions/initiatives.actions';
+// import { CategoriesInput } from '../create/components/CategoriesInput';
+import { AppLinks } from '@/constants/AppLinks';
 
 export default function Filters() {
   const router = useRouter();
   const [locations, setLocations] = useState<string[]>([]);
   const [filters, setFilters] = useState<InitiativesPageSearchParams>({
     location: '',
-    actionDate: '',
     categories: [],
   });
 
@@ -31,17 +31,15 @@ export default function Filters() {
     if (filters.location && filters.location !== '/') {
       params.set('location', filters.location);
     }
-    if (filters.actionDate) params.set('actionDate', filters.actionDate);
-    if (filters.categories.length > 0)
-      params.set('categories', filters.categories.join(','));
+    // if (filters.categories.length > 0)
+    //   params.set('categories', filters.categories.join(','));
 
-    router.push(`/initiatives?${params.toString()}`);
+    router.push(`${AppLinks.INITIATIVES_LIST}?${params.toString()}`);
   };
 
   const clearFilters = () => {
     setFilters({
       location: '',
-      actionDate: '',
       categories: [],
     });
   };
@@ -55,7 +53,7 @@ export default function Filters() {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
       <div>
         <Label htmlFor="location">Location</Label>
         <Select
@@ -81,39 +79,23 @@ export default function Filters() {
           </SelectContent>
         </Select>
       </div>
-      <div>
-        <Label htmlFor="actionDate">Date (from)</Label>
-        <Input
-          id="actionDate"
-          type="date"
-          value={filters.actionDate}
-          onChange={(e) =>
-            setFilters({ ...filters, actionDate: e.target.value })
+      {/* <div>
+        <Label htmlFor="category">Category</Label>
+        <CategoriesInput
+          categories={filters.categories}
+          setCategories={(categories) =>
+            setFilters((prev) => ({ ...prev, categories }))
           }
         />
-      </div>
-      <div>
-        {/* <Label htmlFor="category">Category</Label>
-      <Select value={filters.categories} onValueChange={setCategoryFilter}>
-        <SelectTrigger id="category">
-          <SelectValue placeholder="Select category" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All</SelectItem>
-          {categories.map((category) => (
-            <SelectItem key={category} value={category}>
-              {category}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select> */}
-      </div>
-      <div className="flex items-end gap-2">
-        <Button onClick={handleFilter}>Filter</Button>
-        <Button variant="outline" onClick={clearFilters}>
+      </div> */}
+      <div className="flex items-end gap-2 mt-4">
+        <Button onClick={handleFilter} className="flex-1">
+          Filter
+        </Button>
+        <Button variant="outline" onClick={clearFilters} className="flex-1">
           Clear
         </Button>
       </div>
-    </>
+    </div>
   );
 }

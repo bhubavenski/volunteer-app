@@ -19,7 +19,20 @@ export default function InitiativesList({
   useEffect(() => {
     async function loadData() {
       setIsLoading(true);
-      const data = await getInitiatives(stableFilters);
+
+      const data = await getInitiatives({
+        where: {
+          location: stableFilters.location,
+        },
+        include: {
+          categories: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+
       setIsLoading(false);
       setInitiatives(data);
     }
@@ -34,7 +47,11 @@ export default function InitiativesList({
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {initiatives.length > 0 ? (
         initiatives.map((initiative) => (
-          <InitiativeCard key={initiative.id} initiative={initiative} />
+          <InitiativeCard
+            key={initiative.id}
+            initiative={initiative}
+            className="shadow-md"
+          />
         ))
       ) : (
         <div>No initiatives found</div>

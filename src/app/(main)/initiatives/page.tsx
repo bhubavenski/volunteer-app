@@ -12,7 +12,6 @@ export type InitiativeWithCategories = Prisma.InitiativeGetPayload<{
 
 export type InitiativesPageSearchParams = {
   location: string;
-  actionDate: string;
   categories: string[];
 };
 
@@ -25,12 +24,14 @@ export default async function InitiativesPage({
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">Инициативи</h1>
-      <div className="space-y-8">
-        <div className="grid gap-4 md:grid-cols-4">
+      <div className="flex items-start gap-5">
+        <div className="flex flex-col w-1/4 sticky top-24 p-4 rounded-lg">
+          <h1 className="text-3xl font-bold mb-8">Initiatives</h1>
           <Filters />
         </div>
-        <InitiativesList filters={filters} />
+        <div className="flex-1">
+          <InitiativesList filters={filters} />
+        </div>
       </div>
     </div>
   );
