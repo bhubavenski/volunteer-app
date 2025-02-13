@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} src/prisma/seed.ts",
+    "seed": "pnpm dlx ts-node --compiler-options {\"module\":\"CommonJS\"} src/prisma/seed.ts",
     "schema": "src/prisma/schema.prisma"
   },
   "dependencies": {

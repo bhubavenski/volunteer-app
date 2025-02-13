@@ -162,7 +162,7 @@ export function CreateInitiativeForm() {
         description: 'The new initiative has been added to the system.',
       });
 
-      router.push(`${AppLinks.INITIATIVES_LIST}/${initiative.id}`);
+      router.push(`${AppLinks.INITIATIVE}/${initiative.id}`);
     } catch (error: unknown) {
       console.log(getErrorMessage(error));
       toast({

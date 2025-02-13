@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { AppLinks } from "@/constants/AppLinks"
 import { CalendarIcon, MapPinIcon } from 'lucide-react'
 import Link from 'next/link'
 
@@ -31,7 +32,7 @@ export function ProgramCard({ id, title, description, date, location, imageUrl }
         </div>
       </CardContent>
       <CardFooter>
-        <Link href={`/initiative/${id}`} className="w-full">
+        <Link href={`${AppLinks.INITIATIVE}/${id}`} className="w-full">
           <Button className="w-full">Запиши се</Button>
         </Link>
       </CardFooter>

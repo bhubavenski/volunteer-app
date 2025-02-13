@@ -11,15 +11,21 @@ import {
 export default async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const pathname = req.nextUrl.pathname;
-  console.log(pathname)
   const isAuthRoute = authRoutes.includes(pathname);
   const isPublicRoute =
     publicStaticRoutes.includes(pathname) ||
     publicAssets.includes(pathname) ||
     publicDynamicRoutes.some((route) => pathname.startsWith(route));
 
+  console.log('pathname=', pathname);
+  console.log('isAuthRoute=', isAuthRoute);
+  console.log('token=', token);
+
   if (isAuthRoute) {
+    console.log('tuk')
     if (token) {
+    console.log('tam')
+
       return NextResponse.redirect(
         new URL(DEFAULT_LOGIN_REDIRECT, req.nextUrl)
       );
@@ -30,7 +36,7 @@ export default async function middleware(req: NextRequest) {
   if (!token && !isPublicRoute) {
     return NextResponse.redirect(new URL('/auth/sign-in', req.nextUrl));
   }
-
+  console.log()
   return NextResponse.next();
 }
 

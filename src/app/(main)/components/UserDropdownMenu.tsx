@@ -24,13 +24,9 @@ export default function UserDropdownMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer">
-          <AvatarImage
-            src="/"
-            alt="User avatar"
-            className="size-10 rounded-full border"
-          />
-          <AvatarFallback>
+        <Avatar className="cursor-pointer rounded-lg">
+          <AvatarImage src="/" alt="User avatar" />
+          <AvatarFallback className="rounded-lg">
             <User data-testid={'profile-dropdown-trigger'} />
           </AvatarFallback>
         </Avatar>

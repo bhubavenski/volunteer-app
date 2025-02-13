@@ -26,7 +26,7 @@ export const publicAssets = ['/landing-page/landing-background-img.jpg'];
  * These routes do not require authentication
  * @type {string[]}
  */
-export const publicDynamicRoutes = [];
+export const publicDynamicRoutes = [`${AppLinks.INITIATIVE}/`];
 
 /**
  * The default redirect path after logging in

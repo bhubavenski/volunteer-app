@@ -13,22 +13,24 @@ import { CalendarIcon, MapPinIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-type ProgramCardProps = Prisma.InitiativeGetPayload<{
-  select: {
-    id: true;
-    actionDate: true;
-    location: true;
-    title: true;
-    excerpt: true;
-    categories: true;
-    imagesUrls: true;
-  };
-}>;
+type ProgramCardProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+  initiative: Prisma.InitiativeGetPayload<{
+    select: {
+      id: true;
+      actionDate: true;
+      location: true;
+      title: true;
+      excerpt: true;
+      categories: true;
+      imagesUrls: true;
+    };
+  }>;
+};
 
-export function ProgramCard({ initiative }: { initiative: ProgramCardProps }) {
+export function ProgramCard({ initiative, ...props }: ProgramCardProps) {
   return (
-    <Link href={`initiative/${initiative.id}`}>
-      <Card className="overflow-hidden">
+    <Link href={`initiative/${initiative.id}`} {...props}>
+      <Card className="overflow-hidden flex flex-col size-full">
         <div className="relative w-full h-48">
           <Image
             src={initiative.imagesUrls[0]}
@@ -42,7 +44,7 @@ export function ProgramCard({ initiative }: { initiative: ProgramCardProps }) {
           <CardTitle>{initiative.title}</CardTitle>
           <CardDescription>{initiative.excerpt}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className='mt-auto'>
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <CalendarIcon className="h-4 w-4" />
             <span>{formatDate(initiative.actionDate)}</span>
@@ -51,7 +53,7 @@ export function ProgramCard({ initiative }: { initiative: ProgramCardProps }) {
             <MapPinIcon className="h-4 w-4" />
             <span>{initiative.location}</span>
           </div>
-          <div className="flex flex-wrap justify-between mt-3">
+          <div className="flex flex-wrap gap-1 mt-3">
             {initiative.categories.map((category, index) => (
               <div
                 key={index}
@@ -62,7 +64,7 @@ export function ProgramCard({ initiative }: { initiative: ProgramCardProps }) {
             ))}
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className='mt-auto'>
           <Button className="w-full">Sign up</Button>
         </CardFooter>
       </Card>

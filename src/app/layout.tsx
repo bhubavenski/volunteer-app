@@ -56,7 +56,7 @@ export default function RootLayout({
               <ToastContextProvider>
                 <div className="flex relative flex-col min-h-screen font-lexend isolate card-bg">
                   <Header />
-                  <main className="flex-grow px-6 isolate">{children}</main>
+                  <main className="flex-grow px-6 isolate relative">{children}</main>
                   <Footer />
                 </div>
               </ToastContextProvider>
