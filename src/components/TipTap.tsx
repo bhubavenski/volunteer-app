@@ -16,7 +16,8 @@ const Tiptap = ({
     content: value,
     editorProps: {
       attributes: {
-        class: 'rounded-md p-2 border min-h-[150px] border-input bg-background disabled:cursor-not-allowed disabled:opacity-50',
+        class:
+          'rounded-md p-2 border min-h-[150px] border-input bg-background disabled:cursor-not-allowed disabled:opacity-50',
       },
     },
     onUpdate({ editor }) {

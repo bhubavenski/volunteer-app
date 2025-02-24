@@ -82,3 +82,37 @@ export const initiatives: Prisma.InitiativeCreateInput[] = [
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2932.316907918517!2d23.343012975848113!3d42.59468907116368!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40aa856fae303b0d%3A0xa0f5a3d45a5d11a2!2z0JTQvtC00L7Qu9Cz0L7QstCw!5e0!3m2!1sbg!2sbg!4v1738435481059!5m2!1sbg!2sbg',
   },
 ];
+
+export const tasks: Prisma.TaskCreateInput[] = [
+  {
+    status: "TODO",
+    content: "Подготовка на презентация",
+    description: "Трябва да се създаде презентация за срещата в петък.",
+    assignedTo: {
+      connect: { id: "user-id-1" },
+    },
+    initiative: {
+      connect: { id: "initiative-id-1" },
+    },
+  },
+  {
+    status: "IN_PROGRESS",
+    content: "Разработка на нова функционалност",
+    description: "Добавяне на нова страница в приложението.",
+    assignedTo: {
+      connect: { id: "user-id-2" },
+    },
+    initiative: {
+      connect: { id: "initiative-id-2" },
+    },
+  },
+  {
+    status: "DONE",
+    content: "Ревю на код",
+    description: "Проверка и одобрение на PR.",
+    assignedTo: undefined,
+    initiative: {
+      connect: { id: "initiative-id-3" },
+    },
+  },
+]

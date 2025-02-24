@@ -13,6 +13,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { LogOut, User } from 'lucide-react';
+import { AppLinks } from '@/constants/AppLinks';
 
 export default function UserDropdownMenu() {
   const profileLinks: { href: string; label: string }[] = [
@@ -39,6 +40,10 @@ export default function UserDropdownMenu() {
             <Link href={link.href}>{link.label}</Link>
           </DropdownMenuItem>
         ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="cursor-pointer flex justify-between">
+          <Link href={AppLinks.DASHBOARD}>Dashboard</Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => signOut()}

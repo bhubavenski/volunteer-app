@@ -13,6 +13,13 @@ enum Role {
   INITIATOR
   USER
 }
+
+enum Status {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
 model User {
   id           String      @id @default(uuid())
   username     String      @unique
@@ -23,6 +30,8 @@ model User {
   role         Role
   Initiative   Initiative? @relation(fields: [initiativeId], references: [id])
   initiativeId String?
+  Task         Task[]
+  profileImg   String?
 }
 
 model Initiative {
@@ -36,12 +45,25 @@ model Initiative {
   participants User[]
   mapEmbedUrl  String?
   imagesUrls   String[]
+  Task         Task[]
 }
 
 model Category {
   id          String       @id @default(uuid())
   name        String       @unique
   initiatives Initiative[] @relation("InitiativeCategories")
+}
+
+model Task {
+  id           String     @id @default(uuid())
+  status       Status
+  content      String
+  description  String?
+  assignedTo   User?      @relation(fields: [userId], references: [id])
+  // make it as index
+  initiative   Initiative @relation(fields: [initiativeId], references: [id])
+  userId       String?
+  initiativeId String
 }
 
 // model InitiativeOnCategory {
