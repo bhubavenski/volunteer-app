@@ -19,13 +19,13 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
 import Tiptap from '@/components/TipTap';
-import { sendImageToDiscord } from '@/lib/discord';
-import UploadImage from './UploadImage';
-import { CategoriesInput } from './CategoriesInput';
-import { Prisma } from '@prisma/client';
+import UploadImage from '../UploadImage';
+import { CategoriesInput } from '../CategoriesInput';
 import { createInitiative } from '@/actions/initiatives.actions';
 import { createCategory } from '@/actions/categories.actions';
 import { AppLinks } from '@/constants/AppLinks';
+import { useSession } from 'next-auth/react';
+import { formSchema } from './schema.resolver';
 
 interface UploadedImage {
   id: string;
@@ -33,65 +33,12 @@ interface UploadedImage {
   type: string;
 }
 
-const formSchema = z.object({
-  title: z.string().min(5, {
-    message: 'The title must be at least 5 characters long.',
-  }),
-  excerpt: z.string().min(5, {
-    message: 'The excerpt must be at least 15 characters long.',
-  }),
-  description: z.string().min(20, {
-    message: 'The description must be at least 20 characters long.',
-  }),
-  date: z.string().refine(
-    (date) => {
-      const selectedDate = new Date(date);
-      const today = new Date();
-      return selectedDate > today;
-    },
-    {
-      message: 'The date must be in the future.',
-    }
-  ),
-  time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
-    message: 'Please enter a valid time (HH:MM).',
-  }),
-  location: z.string().min(3, {
-    message: 'The location must be at least 3 characters long.',
-  }),
-  mapEmbedUrl: z
-    .string()
-    .min(20, {
-      message: 'The url must be at least 20 characters long.',
-    })
-    .url({
-      message: 'Please provide a valid URL.',
-    })
-    .optional()
-    .or(z.literal('')),
-  categories: z
-    .array(
-      z.string().min(3, {
-        message: 'The category must be at least 3 characters long.',
-      })
-    )
-    .max(4, {
-      message: 'The categories must not be longer than 4',
-    })
-    .refine((data) => data.length > 0, {
-      message: 'At least one category is required.',
-    }),
-  maxParticipants: z.number().min(1, {
-    message: 'There must be at least 1 participant.',
-  }),
-});
-
 export function CreateInitiativeForm() {
   const router = useRouter();
+  const { data } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [error, setError] = useState<string | null>(null);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -107,30 +54,13 @@ export function CreateInitiativeForm() {
     },
   });
 
+  if (!data) {
+    return <>You cant see this page</>;
+  }
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
       // images, categories and initiative must be in transactions
-      const imagesUrls: string[] = await Promise.all(
-        uploadedImages.map(async (image) => {
-          const response = await fetch(image.url);
-          const blob = await response.blob();
-
-          const file = new File([blob], 'image.jpg', { type: image.type });
-
-          return sendImageToDiscord({ imageFile: file });
-        })
-      );
-
-      const initiativeTemplate: Prisma.InitiativeCreateInput = {
-        title: values.title,
-        description: values.description,
-        excerpt: values.excerpt,
-        location: values.location,
-        actionDate: new Date(`${values.date}T${values.time}`),
-        mapEmbedUrl: values.mapEmbedUrl,
-        imagesUrls: imagesUrls,
-      };
 
       const categoriesIds = await Promise.all(
         values.categories.map((category) =>
@@ -143,13 +73,22 @@ export function CreateInitiativeForm() {
         )
       );
 
+      //TODO: make it more orginized, there too much of whats going on on the screen
       const initiative = await createInitiative({
         data: {
-          ...initiativeTemplate,
+          title: values.title,
+          description: values.description,
+          excerpt: values.excerpt,
+          location: values.location,
+          actionDate: new Date(`${values.date}T${values.time}`),
+          mapEmbedUrl: values.mapEmbedUrl,
           categories: {
             connect: categoriesIds.map((category) => ({
               id: category.id,
             })),
+          },
+          author: {
+            connect: { id: data!.user.sub },
           },
         },
         select: {

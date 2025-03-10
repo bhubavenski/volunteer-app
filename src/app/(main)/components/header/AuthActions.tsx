@@ -16,7 +16,7 @@ export default function AuthActions() {
       {status === 'loading' ? (
         <Skeleton className="w-16 h-10" />
       ) : data ? (
-        <UserDropdownMenu />
+        <UserDropdownMenu username={data.user.username}/>
       ) : (
         <>
           <Button

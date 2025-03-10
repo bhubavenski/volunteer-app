@@ -28,7 +28,7 @@ export const categories: Prisma.CategoryCreateInput[] = [
   { name: 'Old people' },
 ];
 
-export const initiatives: Prisma.InitiativeCreateInput[] = [
+export const initiatives: Omit<Prisma.InitiativeCreateInput, 'author'>[] = [
   {
     title: 'Teach Kids to Code',
     description:
@@ -36,9 +36,7 @@ export const initiatives: Prisma.InitiativeCreateInput[] = [
     location: 'Sofia, Bulgaria',
     actionDate: new Date(),
     excerpt: 'Empowering the next generation with coding skills.',
-    imagesUrls: [
-      'https://i.imgur.com/8LTaqiW.png',
-    ],
+    imagesUrls: ['https://i.imgur.com/8LTaqiW.png'],
     mapEmbedUrl:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2932.3169079185163!2d23.320746975848106!3d42.69701007116366!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40aa856ef31b5283%3A0x6dc52c4a01d5d5b8!2z0KHQvtGE0LjRjyDRhtC10L3RgtGK0YAsIDEwMDAg0KHQvtGE0LjRjw!5e0!3m2!1sbg!2sbg!4v1738436349399!5m2!1sbg!2sbg',
   },
@@ -49,9 +47,7 @@ export const initiatives: Prisma.InitiativeCreateInput[] = [
     location: 'Varna, Bulgaria',
     actionDate: new Date(),
     excerpt: 'Join us in keeping our beaches clean and sustainable.',
-    imagesUrls: [
-      'https://i.imgur.com/U2phnuA.png',
-    ],
+    imagesUrls: ['https://i.imgur.com/U2phnuA.png'],
     mapEmbedUrl:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2932.255472258887!2d23.324756375848132!3d42.69831107116349!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40aa856fae303b0d%3A0xfe3a587a59feb252!2z0JDQv9GC0LXQutCwINCc0LXQtNC10Y8gLSDQlNC-0L3QtNGD0LrQvtCy!5e0!3m2!1sbg!2sbg!4v1738436591034!5m2!1sbg!2sbg',
   },
@@ -62,9 +58,7 @@ export const initiatives: Prisma.InitiativeCreateInput[] = [
     location: 'Plovdiv, Bulgaria',
     actionDate: new Date(),
     excerpt: 'Take action for the environment by planting trees.',
-    imagesUrls: [
-      'https://i.imgur.com/U2phnuA.png',
-    ],
+    imagesUrls: ['https://i.imgur.com/U2phnuA.png'],
     mapEmbedUrl:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2932.316907918515!2d23.320746975848113!3d42.69701007116369!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40aa856ef31b5283%3A0x6dc52c4a01d5d5b8!2z0KHQvtGE0LjRjyDRhtC10L3RgtGK0YAsIDEwMDAg0KHQvtGE0LjRjw!5e0!3m2!1sbg!2sbg!4v1738435549919!5m2!1sbg!2sbg',
   },
@@ -75,9 +69,7 @@ export const initiatives: Prisma.InitiativeCreateInput[] = [
     location: 'Burgas, Bulgaria',
     actionDate: new Date(),
     excerpt: 'Help support and uplift homeless individuals.',
-    imagesUrls: [
-      'blob:https://imgur.com/41318036-1f6e-4878-ab14-6c1d715d1692',
-    ],
+    imagesUrls: ['blob:https://imgur.com/41318036-1f6e-4878-ab14-6c1d715d1692'],
     mapEmbedUrl:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2932.316907918517!2d23.343012975848113!3d42.59468907116368!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40aa856fae303b0d%3A0xa0f5a3d45a5d11a2!2z0JTQvtC00L7Qu9Cz0L7QstCw!5e0!3m2!1sbg!2sbg!4v1738435481059!5m2!1sbg!2sbg',
   },
@@ -85,34 +77,34 @@ export const initiatives: Prisma.InitiativeCreateInput[] = [
 
 export const tasks: Prisma.TaskCreateInput[] = [
   {
-    status: "TODO",
-    content: "Подготовка на презентация",
-    description: "Трябва да се създаде презентация за срещата в петък.",
+    status: 'TODO',
+    title: 'Подготовка на презентация',
+    description: 'Трябва да се създаде презентация за срещата в петък.',
     assignedTo: {
-      connect: { id: "user-id-1" },
+      connect: { id: 'user-id-1' },
     },
     initiative: {
-      connect: { id: "initiative-id-1" },
+      connect: { id: 'initiative-id-1' },
     },
   },
   {
-    status: "IN_PROGRESS",
-    content: "Разработка на нова функционалност",
-    description: "Добавяне на нова страница в приложението.",
+    status: 'IN_PROGRESS',
+    title: 'Разработка на нова функционалност',
+    description: 'Добавяне на нова страница в приложението.',
     assignedTo: {
-      connect: { id: "user-id-2" },
+      connect: { id: 'user-id-2' },
     },
     initiative: {
-      connect: { id: "initiative-id-2" },
+      connect: { id: 'initiative-id-2' },
     },
   },
   {
-    status: "DONE",
-    content: "Ревю на код",
-    description: "Проверка и одобрение на PR.",
+    status: 'DONE',
+    title: 'Ревю на код',
+    description: 'Проверка и одобрение на PR.',
     assignedTo: undefined,
     initiative: {
-      connect: { id: "initiative-id-3" },
+      connect: { id: 'initiative-id-3' },
     },
   },
-]
+];

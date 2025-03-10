@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { CreateInitiativeForm } from './components/CreateInitiativeForm';
+import { CreateInitiativeForm } from './components/create-initiative-form/CreateInitiativeForm';
 
 export const metadata: Metadata = {
   title: 'Създаване на инициатива | ДоброволциБГ',

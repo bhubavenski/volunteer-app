@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import {
   users,
   categories,
@@ -9,31 +9,38 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-async function seedUsers() {
+async function seedUsers(tx: Prisma.TransactionClient) {
   console.log('Seeding users...');
   const usersIds: string[] = [];
 
-  for (const user of users) {
-    const result = await prisma.user.upsert({
-      where: { email: user.email },
-      update: {},
-      create: { ...user, password: await bcrypt.hash(user.password, 10) },
-    });
-    usersIds.push(result.id);
+  try {
+    await Promise.all(
+      users.map(async (user) => {
+        const result = await tx.user.upsert({
+          where: { email: user.email },
+          update: {},
+          create: { ...user, password: await bcrypt.hash(user.password, 10) },
+        });
+        usersIds.push(result.id);
+      })
+    );
+  } catch (error) {
+    console.log('Error occurred while seeding users. Error:', error);
+    throw error;
   }
 
   console.log('Users seeded.');
   return usersIds;
 }
 
-async function seedCategories() {
+async function seedCategories(tx: Prisma.TransactionClient) {
   console.log('Seeding categories...');
   const categoriesIds: string[] = [];
 
   try {
     await Promise.all(
       categories.map(async (category) => {
-        const result = await prisma.category.upsert({
+        const result = await tx.category.upsert({
           where: { name: category.name },
           update: {},
           create: category,
@@ -43,25 +50,36 @@ async function seedCategories() {
     );
   } catch (error) {
     console.log('Error occured while seeding categories. Error:', error);
-    return;
+    throw error;
   }
 
   console.log('Categories seeded.');
   return categoriesIds;
 }
 
-async function seedInitiatives(categoriesIds: string[]) {
+async function seedInitiatives(
+  tx: Prisma.TransactionClient,
+  userIds: string[],
+  categoriesIds: string[]
+) {
   console.log('Seeding initiatives...');
   const initiativesIds: string[] = [];
 
   try {
     await Promise.all(
       initiatives.map(async (initiative) => {
-        const result = await prisma.initiative.create({
+        const randomIndex = Math.floor(Math.random() * userIds.length);
+        const randomUserId = userIds[randomIndex];
+        const result = await tx.initiative.create({
           data: {
             ...initiative,
             categories: {
               connect: categoriesIds.map((id) => ({ id })),
+            },
+            author: {
+              connect: {
+                id: randomUserId,
+              },
             },
           },
         });
@@ -70,30 +88,32 @@ async function seedInitiatives(categoriesIds: string[]) {
     );
   } catch (error) {
     console.log('Error occured while seeding initiatives. Error:', error);
-    return;
+    throw error;
   }
 
   console.log('Initiatives seeded.');
   return initiativesIds;
 }
 
-async function seedTasks(userIds: string[], initiativeIds: string[]) {
+async function seedTasks(
+  tx: Prisma.TransactionClient,
+  userIds: string[],
+  initiativeIds: string[]
+) {
   console.log('Seeding tasks...');
   const tasksIds: string[] = [];
 
-  for(const initiativeId of initiativeIds) {
+  for (const initiativeId of initiativeIds) {
     try {
       await Promise.all(
         tasks.map(async (task) => {
           const randomIndex = Math.floor(Math.random() * userIds.length);
           const randomUserId = userIds[randomIndex];
-  
-          const result = await prisma.task.create({
+
+          const result = await tx.task.create({
             data: {
               ...task,
-              assignedTo: randomUserId
-                ? { connect: { id: randomUserId } }
-                : undefined,
+              assignedTo: { connect: { id: randomUserId } },
               initiative: { connect: { id: initiativeId } },
             },
           });
@@ -102,19 +122,32 @@ async function seedTasks(userIds: string[], initiativeIds: string[]) {
       );
     } catch (error) {
       console.log('Error occured while seeding tasks. Error:', error);
-      return;
+      throw error;
     }
   }
-  
+
   console.log('Tasks seeded.');
   return tasksIds;
 }
 
 async function main() {
-  const usersIds = await seedUsers();
-  const categoriesIds = await seedCategories();
-  const initiativeIds = await seedInitiatives(categoriesIds!);
-  await seedTasks(usersIds, initiativeIds!);
+  await prisma.$transaction(
+    async (tx) => {
+      const usersIds = await seedUsers(tx);
+      const categoriesIds = await seedCategories(tx);
+      const initiativeIds = await seedInitiatives(
+        tx,
+        usersIds!,
+        categoriesIds!
+      );
+      await seedTasks(tx, usersIds!, initiativeIds!);
+    },
+    {
+      timeout: 20000,
+    }
+  );
+
+  console.log('Seeding completed.');
 }
 
 main()

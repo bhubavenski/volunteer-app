@@ -1,6 +1,8 @@
 import { db } from '@/prisma/db';
 import { $Enums, Prisma } from '@prisma/client';
 import Task from './Task/Task';
+import NoInitiativeFound from '../../components/NoInitiativeFound';
+
 // TODO: write only once this options and use Prisma validator
 export type Task = Prisma.TaskGetPayload<{
   where: {
@@ -16,10 +18,10 @@ export type Task = Prisma.TaskGetPayload<{
 }>;
 type GroupedTasks = Record<$Enums.Status, Task[]>;
 
-export default async function TasksDashboard() {
+export default async function TasksDashboard({ id }: { id: string }) {
   const tasks = await db.task.findMany({
     where: {
-      initiativeId: '8b877188-3b5a-42ec-8895-7b55b088cd14',
+      initiativeId: id,
     },
     include: {
       assignedTo: {
@@ -39,10 +41,11 @@ export default async function TasksDashboard() {
 
     return acc;
   }, {} as GroupedTasks);
+  const groupedTasksArr = Object.keys(groupedTasks);
 
-  return (
-    <div className="grid grid-cols-3 gap-5 flex-1 text-white">
-      {Object.keys(groupedTasks).map((status) => {
+  return groupedTasksArr.length ? (
+    <div className="grid grid-cols-3 gap-5 text-white">
+      {groupedTasksArr.map((status) => {
         const currentTasks = groupedTasks[status as $Enums.Status];
 
         return (
@@ -58,5 +61,8 @@ export default async function TasksDashboard() {
         );
       })}
     </div>
+  ) : (
+  //  <AddTaskDialog/>
+  <NoInitiativeFound/>
   );
 }

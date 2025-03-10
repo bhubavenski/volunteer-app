@@ -32,6 +32,7 @@ import { getErrorMessage } from '@/lib/utils';
 import { SignUpValues, SignUpSchema } from '@/schemas/forms/SignUpFormSchema';
 import { registerUser } from '@/actions/users/auth.actions';
 import { AppLinks } from '@/constants/AppLinks';
+import { Role } from '@prisma/client';
 
 type CustomSubmitHandler<T extends FieldValues> = (
   formData: T,
@@ -53,7 +54,7 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
       email: '',
       password: '',
       username: '',
-      role: 'user',
+      role: Role.USER,
     },
     resolver: zodResolver(SignUpSchema),
   });
@@ -71,7 +72,7 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
         email,
         password,
         username,
-        role: 'user',
+        role: Role.USER,
       });
 
       if (user && 'error' in user && user.error) {

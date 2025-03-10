@@ -13,22 +13,22 @@ import Tiptap from '@/components/TipTap';
 export default function TaskDialog({
   isDialogOpen,
   setIsDialogOpen,
-  content,
+  title,
   description,
 }: {
   isDialogOpen: boolean;
   setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  content: string;
+  title: string;
   description: string;
 }) {
   const [value, onChange] = useState(description);
   const [isInEditMode, setIsInEditMode] = useState({
-    content: false,
+    title: false,
     description: false,
   });
 
-  function changeContentEditableMode(bol: boolean) {
-    setIsInEditMode((prev) => ({ ...prev, content: bol }));
+  function changeTitleEditableMode(bol: boolean) {
+    setIsInEditMode((prev) => ({ ...prev, title: bol }));
   }
   function changeDescriptionEditableMode(bol: boolean) {
     setIsInEditMode((prev) => ({ ...prev, description: bol }));
@@ -39,17 +39,17 @@ export default function TaskDialog({
       <DialogContent className="min-h-60 flex flex-col">
         <DialogHeader>
           <DialogTitle
-            contentEditable={isInEditMode.content}
-            onClick={() => changeContentEditableMode(true)}
+            contentEditable={isInEditMode.title}
+            onClick={() => changeTitleEditableMode(true)}
           >
-            {content}
+            {title}
           </DialogTitle>
-          {isInEditMode.content && (
+          {isInEditMode.title && (
             <div className="flex gap-3 mt-auto">
               <Button>Save</Button>
               <Button
                 variant="secondary"
-                onClick={() => changeContentEditableMode(false)}
+                onClick={() => changeTitleEditableMode(false)}
               >
                 Cancel
               </Button>

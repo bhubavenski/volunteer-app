@@ -1,28 +1,36 @@
-import { Button } from '@/components/ui/button';
-import { FolderDot} from 'lucide-react';
 import React from 'react';
-import TasksDashboard from './components/TasksDashboard';
-import AddTaskDialog from './components/AddTaskDialog';
+import PersonalInitiativesView from './components/PersonalInitiativesView';
+import LayoutNav from './components/LayoutNav';
+import { getInitiatives } from '@/actions/initiatives.actions';
+import { AppLinks } from '@/constants/AppLinks';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
-/*
-ot tuk she se suzdavat novi iniciative
-razglejdat suzdadeni
-razglevjdat se hora
-i statistiki
-*/
-export default function page() {
+export default async function page() {
+  const session = await auth();
+  if (!session?.user.sub) {
+    redirect(AppLinks.SIGN_IN);
+  }
+
+  const initiatives = await getInitiatives({
+    where: {
+      author: {
+        id: session?.user.sub,
+      },
+    },
+  });
+
   return (
-    <div className="flex items-center bg-red-400 justify-center absolute inset-0 px-6">
-      <div className=" w-full bg-[#363535] min-h-48 flex p-3 gap-3 rounded-lg">
-        <nav className="flex flex-col gap-3">
-          <AddTaskDialog/>
-          <Button className="flex gap-1 items-center">
-            <FolderDot />
-            My Activities
-          </Button>
-        </nav>
-        <TasksDashboard />
+    <>
+      <LayoutNav />
+      <div className="grid grid-cols-4 gap-4">
+        {initiatives.map((initiative) => (
+          <Link href={`${AppLinks.DASHBOARD}/${initiative.id}`} key={initiative.id}>
+            <PersonalInitiativesView initiative={initiative} />
+          </Link>
+        ))}
       </div>
-    </div>
+    </>
   );
 }

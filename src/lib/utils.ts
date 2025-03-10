@@ -34,7 +34,7 @@ type ValidationResult<T> = { data: T } | { error: string };
 
 export function validateSchema<T>(
   schema: z.Schema<T>,
-  data: any
+  data: unknown
 ): ValidationResult<T> {
   const result = schema.safeParse(data);
 

@@ -21,17 +21,17 @@ enum Status {
 }
 
 model User {
-  id           String      @id @default(uuid())
-  username     String      @unique
-  email        String      @unique
-  password     String
-  firstName    String?
-  lastName     String?
-  role         Role
-  Initiative   Initiative? @relation(fields: [initiativeId], references: [id])
-  initiativeId String?
-  Task         Task[]
-  profileImg   String?
+  id            String       @id @default(uuid())
+  username      String       @unique
+  email         String       @unique
+  password      String
+  firstName     String?
+  lastName      String?
+  role          Role
+  authored      Initiative[] @relation("InitiativeAuthor") // Един потребител може да е автор на много инициативи
+  participations Initiative[] @relation("InitiativeParticipants") // Много към много, без `references`
+  Task          Task[]
+  profileImg    String?
 }
 
 model Initiative {
@@ -42,10 +42,12 @@ model Initiative {
   location     String
   actionDate   DateTime
   categories   Category[] @relation("InitiativeCategories")
-  participants User[]
+  participants User[]     @relation("InitiativeParticipants") // Много към много, без `references`
   mapEmbedUrl  String?
   imagesUrls   String[]
   Task         Task[]
+  author       User       @relation("InitiativeAuthor", fields: [userId], references: [id]) // Един към много
+  userId       String
 }
 
 model Category {
@@ -57,7 +59,7 @@ model Category {
 model Task {
   id           String     @id @default(uuid())
   status       Status
-  content      String
+  title        String
   description  String?
   assignedTo   User?      @relation(fields: [userId], references: [id])
   // make it as index

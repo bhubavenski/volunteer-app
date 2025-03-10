@@ -8,11 +8,11 @@ import { AppLinks } from '@/constants/AppLinks';
 
 declare module 'next-auth' {
   interface User extends PrismaUser {
-    rememberMe: boolean;
-  }
+    id: string;
+  } // Наследява всички полета от Prisma.User
 
   interface Session extends DefaultSession {
-    user: User & { sub?: string };
+    user: User & { sub?: string }; // Добавя свойство sub към user
   }
 }
 
@@ -27,7 +27,6 @@ export const authOptions: NextAuthOptions = {
       name: 'Credentials',
       credentials: {},
       async authorize(credentials) {
-        console.log('authorize ran');
         if (!credentials) {
           throw new Error('No credentials were found');
         }
@@ -38,13 +37,15 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Credentials are not in valid format');
         }
 
-        const { email, password, rememberMe } = validatedFields.data;
-        let user = null;
+        // const { email, password, rememberMe } = validatedFields.data;
+        const { email, password } = validatedFields.data;
+
+        let user: PrismaUser | null = null;
 
         try {
-          user = (await db.user.findUnique({
+          user = await db.user.findUnique({
             where: { email },
-          })) as PrismaUser & { rememberMe: boolean };
+          });
         } catch {
           throw new Error('Error occured while searching for a user');
         }
@@ -59,35 +60,36 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Wrong credentials');
         }
 
-        user.rememberMe = rememberMe;
+        // user.rememberMe = rememberMe;
         return user;
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
-      console.log('jwt ran');
-
       if (user) {
         token.sub = user.id;
         token.role = user.role;
-        token.rememberMe = user.rememberMe || false;
-      }
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+        token.username = user.username;
 
-      if (token.rememberMe) {
-        token.exp = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60;
-      } else {
-        token.exp = Math.floor(Date.now() / 1000) + 24 * 60;
+        // token.rememberMe = user.rememberMe || false;
       }
+      // if (token.rememberMe) {
+      //   token.exp = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60;
+      // } else {
+      //   token.exp = Math.floor(Date.now() / 1000) + 24 * 60;
+      // }
 
-      console.log(user, token);
       return token;
     },
     async session({ session, token }) {
-      console.log('session ran');
-
       session.user.sub = token.sub;
       session.user.role = token.role as Role;
+      session.user.firstName = token.firstName as string | null;
+      session.user.lastName = token.lastName as string | null;
+      session.user.username = token.username as string;
 
       return session;
     },
