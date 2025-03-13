@@ -31,7 +31,7 @@ export default function InitiativeCard({
         <div className="flex items-center space-x-2 text-sm text-muted-foreground">
           <CalendarIcon className="h-4 w-4" />
           <span>
-            {new Date(initiative.actionDate).toLocaleDateString('bg-BG')}
+            {new Date(initiative.startDate).toLocaleDateString('bg-BG')}
           </span>
         </div>
         <div className="flex items-center space-x-2 text-sm text-muted-foreground mt-2">

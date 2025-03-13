@@ -1,76 +1,178 @@
-import React from 'react';
-import { VerticalNavbar } from './components/NavMenu';
-import { Prisma } from '@prisma/client';
-import TasksDashboard from './components/TasksDashboard';
+'use client';
 
-// TODO: write only once this options and use Prisma validator
-export type Task = Prisma.TaskGetPayload<{
-  where: {
-    initiativeId: '8b877188-3b5a-42ec-8895-7b55b088cd14';
+import { useState, useEffect } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+import { Task } from '@prisma/client';
+import { Backlog } from './components/Backlog';
+import { CreateSprintDialog } from './components/CreateSprintDialog';
+import { CreateTaskDialog } from './components/CreateTaskDialog';
+import { SprintBoard } from './components/SprintBoard';
+import { Sprint } from './components/types';
+
+export default function Page() {
+  // Състояния за задачи, спринтове и диалози
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [sprints, setSprints] = useState<Sprint[]>([]);
+  const [activeSprintId, setActiveSprintId] = useState<string | null>(null);
+  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
+  const [isCreateSprintOpen, setIsCreateSprintOpen] = useState(false);
+
+  // Зареждане на данни от localStorage при първоначално зареждане
+  useEffect(() => {
+    const savedTasks = localStorage.getItem('kanban-tasks');
+    const savedSprints = localStorage.getItem('kanban-sprints');
+
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    }
+
+    if (savedSprints) {
+      const parsedSprints = JSON.parse(savedSprints);
+      setSprints(parsedSprints);
+
+      // Задаване на активен спринт, ако има такъв
+      if (parsedSprints.length > 0) {
+        setActiveSprintId(parsedSprints[0].id);
+      }
+    }
+  }, []);
+
+  // Запазване на данни в localStorage при промяна
+  useEffect(() => {
+    localStorage.setItem('kanban-tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem('kanban-sprints', JSON.stringify(sprints));
+  }, [sprints]);
+
+  // Функция за добавяне на нова задача
+  const handleAddTask = (newTask: Task) => {
+    setTasks([...tasks, newTask]);
+    setIsCreateTaskOpen(false);
   };
-  include: {
-    assignedTo: {
-      select: {
-        profileImg: true;
-      };
-    };
+
+  // Функция за добавяне на нов спринт
+  const handleAddSprint = (newSprint: Sprint) => {
+    const updatedSprints = [...sprints, newSprint];
+    setSprints(updatedSprints);
+    setIsCreateSprintOpen(false);
+
+    // Ако това е първият спринт, направете го активен
+    if (updatedSprints.length === 1) {
+      setActiveSprintId(newSprint.id);
+    }
   };
-}>;
-// type GroupedTasks = Record<$Enums.Status, Task[]>;
 
-export default async function page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  // const tasks = await db.task.findMany({
-  //   where: {
-  //     initiativeId: id,
-  //   },
-  //   include: {
-  //     assignedTo: {
-  //       select: {
-  //         profileImg: true,
-  //       },
-  //     },
-  //   },
-  // });
+  // Функция за преместване на задача между колоните в спринта
+  const moveTaskInSprint = (
+    taskId: string,
+    newStatus: 'todo' | 'in-progress' | 'done'
+  ) => {
+    console.log(`Moving task ${taskId} to ${newStatus}`);
+    const updatedTasks = tasks.map((task) =>
+      task.id === taskId ? { ...task, status: newStatus } : task
+    );
+    setTasks(updatedTasks);
+  };
 
-  // const groupedTasks: GroupedTasks = tasks.reduce((acc, task) => {
-  //   if (!acc[task.status]) {
-  //     acc[task.status] = [];
-  //   }
+  // Функция за преместване на задача от backlog към спринт
+  const moveTaskToSprint = (taskId: string, sprintId: string) => {
+    console.log(`Moving task ${taskId} to sprint ${sprintId}`);
+    const updatedTasks = tasks.map((task) =>
+      task.id === taskId ? { ...task, sprintId, status: 'todo' } : task
+    );
+    setTasks(updatedTasks);
+  };
 
-  //   acc[task.status].push(task);
+  // Функция за връщане на задача от спринт в backlog
+  const moveTaskToBacklog = (taskId: string) => {
+    console.log(`Moving task ${taskId} back to backlog`);
+    const updatedTasks = tasks.map((task) =>
+      task.id === taskId ? { ...task, sprintId: null, status: null } : task
+    );
+    setTasks(updatedTasks);
+  };
 
-  //   return acc;
-  // }, {} as GroupedTasks);
-  // const groupedTasksArr = Object.keys(groupedTasks);
+  // Филтриране на задачи за backlog (задачи без спринт)
+  const backlogTasks = tasks.filter((task) => !task.sprintId);
 
   return (
-    // <div className="flex h-screen">
-    //   <main className="flex-1 p-6">
-    //     <h1 className="text-2xl font-bold">Dashboard</h1>
-    //     <p className="mt-2 text-muted-foreground">Welcome to your dashboard</p>
-    //     <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-    //       {groupedTasksArr.map((status) => (
-    //         <div key={i} className="rounded-lg border bg-card p-4 shadow-sm">
-    //           <div className="h-32 rounded-md bg-muted" />
-    //           <h2 className="mt-2 font-semibold">Card {i + 1}</h2>
-    //           <p className="text-sm text-muted-foreground">
-    //             Card description goes here
-    //           </p>
-    //         </div>
-    //       ))}
-    //     </div>
-    //   </main>
-    // </div>
+    <DndProvider backend={HTML5Backend}>
+      <div className="container mx-auto p-4 min-h-screen">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Kanban Дъска</h1>
+          <div className="flex space-x-2">
+            <Button onClick={() => setIsCreateTaskOpen(true)}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Нова задача
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsCreateSprintOpen(true)}
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Нов спринт
+            </Button>
+          </div>
+        </div>
 
-    <div className="flex gap-3">
-      <VerticalNavbar />
+        <Tabs defaultValue="backlog" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <TabsList>
+              <TabsTrigger value="backlog">Backlog</TabsTrigger>
+              {sprints.map((sprint) => (
+                <TabsTrigger
+                  key={sprint.id}
+                  value={sprint.id}
+                  onClick={() => setActiveSprintId(sprint.id)}
+                >
+                  {sprint.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
 
-      <TasksDashboard id={id} />
-    </div>
+          <TabsContent value="backlog" className="min-h-[600px]">
+            <Backlog
+              tasks={backlogTasks}
+              sprints={sprints}
+              onMoveToSprint={moveTaskToSprint}
+            />
+          </TabsContent>
+
+          {sprints.map((sprint) => (
+            <TabsContent
+              key={sprint.id}
+              value={sprint.id}
+              className="min-h-[600px]"
+            >
+              <SprintBoard
+                sprint={sprint}
+                tasks={tasks.filter((task) => task.sprintId === sprint.id)}
+                onMoveTask={moveTaskInSprint}
+                onMoveToBacklog={moveTaskToBacklog}
+              />
+            </TabsContent>
+          ))}
+        </Tabs>
+
+        <CreateTaskDialog
+          open={isCreateTaskOpen}
+          onOpenChange={setIsCreateTaskOpen}
+          onAddTask={handleAddTask}
+        />
+
+        <CreateSprintDialog
+          open={isCreateSprintOpen}
+          onOpenChange={setIsCreateSprintOpen}
+          onAddSprint={handleAddSprint}
+        />
+      </div>
+    </DndProvider>
   );
 }

@@ -9,7 +9,7 @@ import { Prisma } from '@prisma/client';
 export type InitiativeWithParticipantsCount = Prisma.InitiativeGetPayload<{
   select: {
     title: true;
-    actionDate: true;
+    startDate: true;
     description: true;
     location: true;
     mapEmbedUrl: true;
@@ -35,7 +35,7 @@ export default async function InitiativePage({
     },
     select: {
       title: true,
-      actionDate: true,
+      startDate: true,
       description: true,
       location: true,
       mapEmbedUrl: true,

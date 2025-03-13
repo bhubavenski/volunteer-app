@@ -2,8 +2,9 @@ import { AppLinks } from '@/constants/AppLinks';
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import React, { ReactNode } from 'react';
-import NoInitiativeFound from './components/NoInitiativeFound';
+import HTTPErrorMessage from './components/HTTPErrorMessage';
 import { db } from '@/prisma/db';
+import { Button } from '@/components/ui/button';
 
 /*
 ot tuk she se suzdavat novi iniciative
@@ -13,6 +14,7 @@ i statistiki
 */
 export default async function Layout({ children }: { children: ReactNode }) {
   const session = await auth();
+
   if (!session?.user.sub) {
     redirect(AppLinks.SIGN_IN);
   }
@@ -25,13 +27,20 @@ export default async function Layout({ children }: { children: ReactNode }) {
     })) !== null;
 
   return (
-    <div className="flex items-center justify-center absolute inset-0 p-6">
-      <div className=" w-full min-h-full p-3 rounded-lg ">
+    <div className="flex items-center justify-center inset-0 p-6 relative">
+      <div className=" w-full h-full p-3 rounded-lg ">
         {hasInitiatives ? (
           <>{children}</>
         ) : (
           <div className="grid content-center">
-            <NoInitiativeFound />
+            <HTTPErrorMessage
+              href={AppLinks.CREATE_INITIATIVE}
+              code="404"
+              title="No Initiatives were found."
+              description="Sorry, we can't find that page."
+            >
+              <Button>Hey</Button>
+            </HTTPErrorMessage>
           </div>
         )}
       </div>

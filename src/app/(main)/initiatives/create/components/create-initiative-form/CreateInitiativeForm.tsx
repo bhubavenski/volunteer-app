@@ -80,7 +80,7 @@ export function CreateInitiativeForm() {
           description: values.description,
           excerpt: values.excerpt,
           location: values.location,
-          actionDate: new Date(`${values.date}T${values.time}`),
+          startDate: new Date(`${values.date}T${values.time}`),
           mapEmbedUrl: values.mapEmbedUrl,
           categories: {
             connect: categoriesIds.map((category) => ({

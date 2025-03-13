@@ -3,8 +3,6 @@ import { CalendarIcon, Clock, MapPin, Users } from 'lucide-react';
 import React from 'react';
 import { InitiativeWithParticipantsCount } from '../page';
 
-
-
 export default function DetailsCard({
   initiative,
 }: {
@@ -13,12 +11,14 @@ export default function DetailsCard({
   return (
     <Card>
       <CardContent className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Initiative&apos;s Details</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          Initiative&apos;s Details
+        </h2>
         <div className="space-y-4">
           <div className="flex items-center">
             <CalendarIcon className="mr-2 h-5 w-5 text-muted-foreground" />
             <span>
-              {initiative.actionDate.toLocaleDateString('en-En', {
+              {initiative.startDate.toLocaleDateString('en-En', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',

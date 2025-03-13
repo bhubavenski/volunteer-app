@@ -16,7 +16,7 @@ export default function Header() {
       <nav className="mr-8">
         <ul className="flex items-center gap-4">
           <li>
-            <AuthWrraper role={Role.INITIATOR}>
+            <AuthWrraper role={[Role.INITIATOR, Role.ADMIN]}>
               <Link
                 href={AppLinks.CREATE_INITIATIVE}
                 className="hover:underline"

@@ -11,12 +11,16 @@ import { AppLinks } from '@/constants/AppLinks';
 export default function AuthActions() {
   const { data, status } = useSession();
   const router = useRouter();
+  
   return (
     <>
       {status === 'loading' ? (
         <Skeleton className="w-16 h-10" />
       ) : data ? (
-        <UserDropdownMenu username={data.user.username}/>
+        <UserDropdownMenu
+          username={data.user.username}
+          profileId={data.user.sub!}
+        />
       ) : (
         <>
           <Button

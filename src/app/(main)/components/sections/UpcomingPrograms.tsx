@@ -5,12 +5,12 @@ import { db } from '@/prisma/db';
 export default async function UpcomingPrograms() {
   const programs = await db.initiative.findMany({
     orderBy: {
-      actionDate: 'desc',
+      startDate: 'desc',
     },
     take: 3,
     select: {
       id: true,
-      actionDate: true,
+      startDate: true,
       location: true,
       title: true,
       excerpt: true,

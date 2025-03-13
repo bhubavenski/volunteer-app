@@ -17,7 +17,7 @@ type ProgramCardProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   initiative: Prisma.InitiativeGetPayload<{
     select: {
       id: true;
-      actionDate: true;
+      startDate: true;
       location: true;
       title: true;
       excerpt: true;
@@ -44,10 +44,10 @@ export function ProgramCard({ initiative, ...props }: ProgramCardProps) {
           <CardTitle>{initiative.title}</CardTitle>
           <CardDescription>{initiative.excerpt}</CardDescription>
         </CardHeader>
-        <CardContent className='mt-auto'>
+        <CardContent className="mt-auto">
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <CalendarIcon className="h-4 w-4" />
-            <span>{formatDate(initiative.actionDate)}</span>
+            <span>{formatDate(initiative.startDate)}</span>
           </div>
           <div className="flex items-center space-x-2 text-sm text-muted-foreground mt-2">
             <MapPinIcon className="h-4 w-4" />
@@ -64,7 +64,7 @@ export function ProgramCard({ initiative, ...props }: ProgramCardProps) {
             ))}
           </div>
         </CardContent>
-        <CardFooter className='mt-auto'>
+        <CardFooter className="mt-auto">
           <Button className="w-full">Sign up</Button>
         </CardFooter>
       </Card>

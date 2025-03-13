@@ -21,17 +21,17 @@ enum Status {
 }
 
 model User {
-  id            String       @id @default(uuid())
-  username      String       @unique
-  email         String       @unique
-  password      String
-  firstName     String?
-  lastName      String?
-  role          Role
-  authored      Initiative[] @relation("InitiativeAuthor") // Един потребител може да е автор на много инициативи
-  participations Initiative[] @relation("InitiativeParticipants") // Много към много, без `references`
-  Task          Task[]
-  profileImg    String?
+  id          String       @id @default(uuid())
+  username    String       @unique
+  email       String       @unique
+  password    String
+  firstName   String?
+  lastName    String?
+  role        Role
+  authored    Initiative[] @relation("InitiativeAuthor")
+  Task        Task[]
+  profileImg  String?
+  initiatives Initiative[] @relation("InitiativeParticipants") // Много към много отношение без references
 }
 
 model Initiative {
@@ -40,14 +40,16 @@ model Initiative {
   description  String
   excerpt      String
   location     String
-  actionDate   DateTime
+  startDate    DateTime
+  endDate      DateTime
   categories   Category[] @relation("InitiativeCategories")
-  participants User[]     @relation("InitiativeParticipants") // Много към много, без `references`
+  participants User[]     @relation("InitiativeParticipants") // Много към много отношение без references
   mapEmbedUrl  String?
   imagesUrls   String[]
-  Task         Task[]
-  author       User       @relation("InitiativeAuthor", fields: [userId], references: [id]) // Един към много
+  tasks        Task[]
+  author       User       @relation("InitiativeAuthor", fields: [userId], references: [id])
   userId       String
+  totalHours   Int?
 }
 
 model Category {
@@ -61,19 +63,19 @@ model Task {
   status       Status
   title        String
   description  String?
+  dueDate      DateTime?
   assignedTo   User?      @relation(fields: [userId], references: [id])
-  // make it as index
-  initiative   Initiative @relation(fields: [initiativeId], references: [id])
   userId       String?
+  initiative   Initiative @relation(fields: [initiativeId], references: [id])
   initiativeId String
+  category     String     @default("main")
 }
 
-// model InitiativeOnCategory {
+// model InitiativeParticipants {
+//   user         User       @relation(fields: [userId], references: [id])
+//   userId       String
 //   initiative   Initiative @relation(fields: [initiativeId], references: [id])
 //   initiativeId String
 
-//   category   Category @relation(fields: [categoryId], references: [id])
-//   categoryId String
-
-//   @@id([initiativeId, categoryId])
+//   @@id([userId, initiativeId])
 // }

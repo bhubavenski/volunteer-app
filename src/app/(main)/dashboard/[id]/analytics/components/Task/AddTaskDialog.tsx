@@ -1,6 +1,6 @@
 'use client';
 
-import React, {  useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -24,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { createTask } from '@/actions/tasks.actions';
 import { useParams } from 'next/navigation';
+import { DialogProps } from '@radix-ui/react-dialog';
 
 const createTaskSchema = z.object({
   title: z.string().min(2, {
@@ -36,7 +36,10 @@ const createTaskSchema = z.object({
 //TODO find better naming convention
 export type CreateTaskT = z.infer<typeof createTaskSchema>;
 
-export default function AddTaskDialog() {
+export default function AddTaskDialog({
+  trigger,
+  ...props
+}: { trigger?: ReactNode } & DialogProps) {
   const form = useForm<CreateTaskT>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
@@ -56,13 +59,13 @@ export default function AddTaskDialog() {
   };
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={(v) => setIsDialogOpen(v)}>
-      <DialogTrigger>
-        <Button className="flex gap-1 items-center w-full text-2xl">
-          <Plus />
-          Initiatives
-        </Button>
-      </DialogTrigger>
+    <Dialog
+      open={isDialogOpen}
+      onOpenChange={(v) => setIsDialogOpen(v)}
+      {...props}
+    >
+      {trigger && <DialogTrigger>{trigger}</DialogTrigger>}
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create new task</DialogTitle>

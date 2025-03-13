@@ -21,7 +21,7 @@ export default function PersonalInitiativesView({
         <CardDescription>{initiative.excerpt}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <p>Action date: {formatDate(initiative.actionDate)}</p>
+        <p>Action date: {formatDate(initiative.startDate)}</p>
       </CardFooter>
     </Card>
   );

@@ -81,6 +81,9 @@ async function seedInitiatives(
                 id: randomUserId,
               },
             },
+            participants: {
+              connect: userIds.map((id) => ({ id })),
+            }
           },
         });
         initiativesIds.push(result.id);

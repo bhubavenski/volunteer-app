@@ -12,7 +12,7 @@ export default function CalendarCard({
       <h2 className="text-2xl font-semibold mb-4">Calendar</h2>
       <Calendar
         mode="single"
-        selected={initiative.actionDate}
+        selected={initiative.startDate}
         className="rounded-md border"
       />
     </div>

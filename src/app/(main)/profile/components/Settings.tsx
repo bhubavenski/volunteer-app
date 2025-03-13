@@ -7,13 +7,18 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { deleteUser } from '@/actions/users/auth.actions';
 import { Toast, useToastContext } from '@/contexts/ToastContext';
+import { Role } from '@prisma/client';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 type ProfileAdditionalOptionsProps = {
   onDelete?: (toast: Toast) => Promise<Toast>;
+  role: Role;
 };
 
 export default function Settings({
   onDelete,
+  role,
 }: ProfileAdditionalOptionsProps) {
   const toast = useToastContext();
 
@@ -37,6 +42,20 @@ export default function Settings({
         <CardTitle>Settings</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        <form className='flex flex-col gap-3'>
+          <div>
+            <Label>First name</Label>
+            <Input />
+          </div>
+          <div>
+            <Label>Last name</Label>
+            <Input />
+          </div>
+          <Button>Update</Button>
+        </form>
+        <div>
+          role: <span className="bold">{role}</span>
+        </div>
         <Button variant="outline" className="w-full justify-start">
           <HelpCircle className="mr-2 h-4 w-4" />
           <div className=" flex gap-2">

@@ -15,14 +15,20 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { LogOut, User } from 'lucide-react';
 import { AppLinks } from '@/constants/AppLinks';
 
-export default function UserDropdownMenu({ username }: { username: string }) {
+export default function UserDropdownMenu({
+  username,
+  profileId,
+}: {
+  username: string;
+  profileId: string;
+}) {
   const profileLinks: { href: string; label: string }[] = [
     {
-      href: '/profile',
+      href: `/profile/${profileId}`,
       label: 'settings',
     },
   ];
-  console.log({username})
+  console.log({ username });
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
