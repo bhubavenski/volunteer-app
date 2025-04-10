@@ -45,6 +45,7 @@ export async function registerUser(body: SignUpValues) {
     return { error: 'Error accured while creating user' };
   }
 }
+
 export const deleteUser = async () => {
   const session = await getServerSession(authOptions);
 
