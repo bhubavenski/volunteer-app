@@ -21,33 +21,34 @@ import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { bg } from "date-fns/locale"
 import { cn } from "@/lib/utils"
-import type { Sprint } from "./types"
+import { CreateSprintResult } from "@/actions/sprints.actions"
 
 interface CreateSprintDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onAddSprint: (sprint: Sprint) => void
+  onAddSprint: (newSprint: Parameters<CreateSprintResult>[1]) => Promise<void>
 }
 
 export function CreateSprintDialog({ open, onOpenChange, onAddSprint }: CreateSprintDialogProps) {
-  const [name, setName] = useState("")
-  const [goal, setGoal] = useState("")
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
   const [startDate, setStartDate] = useState<Date | undefined>(new Date())
   const [endDate, setEndDate] = useState<Date | undefined>(
     new Date(new Date().setDate(new Date().getDate() + 14)), // По подразбиране 2 седмици
   )
 
+  // TODO use react form and zod validation
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!name.trim() || !startDate || !endDate) return
+    if (!title.trim() || !startDate || !endDate) return
 
-    const newSprint: Sprint = {
-      id: crypto.randomUUID(),
-      name,
-      goal,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
+    const newSprint: Parameters<CreateSprintResult>[1] = {
+      title,
+      description,
+      startDate: new Date(),
+      dueDate: new Date(),
     }
 
     onAddSprint(newSprint)
@@ -55,8 +56,8 @@ export function CreateSprintDialog({ open, onOpenChange, onAddSprint }: CreateSp
   }
 
   const resetForm = () => {
-    setName("")
-    setGoal("")
+    setTitle("")
+    setDescription("")
     setStartDate(new Date())
     setEndDate(new Date(new Date().setDate(new Date().getDate() + 14)))
   }
@@ -74,8 +75,8 @@ export function CreateSprintDialog({ open, onOpenChange, onAddSprint }: CreateSp
               <Label htmlFor="name">Име на спринта</Label>
               <Input
                 id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 placeholder="Например: Спринт 1"
                 required
               />
@@ -84,8 +85,8 @@ export function CreateSprintDialog({ open, onOpenChange, onAddSprint }: CreateSp
               <Label htmlFor="goal">Цел на спринта</Label>
               <Textarea
                 id="goal"
-                value={goal}
-                onChange={(e) => setGoal(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 placeholder="Опишете целта на спринта"
                 rows={2}
               />

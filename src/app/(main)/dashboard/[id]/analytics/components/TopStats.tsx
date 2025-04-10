@@ -21,15 +21,16 @@ export default function TopStats({
             {/* TODO i am not sure if this should be length or count */}
             {initiativeData.participants.length}
           </div>
-          <p className="text-xs text-muted-foreground">
+          {/* if you want include it */}
+          {/* <p className="text-xs text-muted-foreground">
             <span className="text-green-500 font-medium flex items-center">
               <ArrowUpRight className="mr-1 h-3 w-3" />
               +8 от миналата седмица
             </span>
-          </p>
+          </p> */}
         </CardContent>
       </Card>
-      <Card>
+      {/* <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
             Отработени часове
@@ -45,7 +46,7 @@ export default function TopStats({
             </span>
           </p>
         </CardContent>
-      </Card>
+      </Card> */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
@@ -57,12 +58,12 @@ export default function TopStats({
           <div className="text-2xl font-bold">
             {initiativeData.doneTasksCount}/{initiativeData._count.tasks}
           </div>
-          <p className="text-xs text-muted-foreground">
+          {/* <p className="text-xs text-muted-foreground">
             <span className="text-green-500 font-medium flex items-center">
               <ArrowUpRight className="mr-1 h-3 w-3" />
               +5 от миналата седмица
             </span>
-          </p>
+          </p> */}
         </CardContent>
       </Card>
       {/* make it as product backlog */}

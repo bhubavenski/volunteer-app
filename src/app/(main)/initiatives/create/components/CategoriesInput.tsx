@@ -51,7 +51,7 @@ export const CategoriesInput: React.FC<CategoriesInputProps> = ({
           placeholder="Въведете категория"
           className="flex-grow"
         />
-        <Button onClick={addCategory}>Add</Button>
+        <Button type='button' onClick={addCategory}>Add</Button>
       </div>
       {categories.length > 0 && (
         <div className="flex flex-wrap gap-2">

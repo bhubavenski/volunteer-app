@@ -97,6 +97,7 @@ export const tasks: Prisma.TaskCreateInput[] = [
     },
     category: 'event initialization',
     dueDate: new Date(),
+    priority: 'LOW'
   },
   {
     status: 'IN_PROGRESS',
@@ -110,6 +111,8 @@ export const tasks: Prisma.TaskCreateInput[] = [
     },
     category: 'event initialization',
     dueDate: new Date(),
+    priority: 'LOW'
+
   },
   {
     status: 'DONE',
@@ -121,5 +124,7 @@ export const tasks: Prisma.TaskCreateInput[] = [
     },
     category: 'actual help',
     dueDate: new Date(),
+    priority: 'LOW'
+
   },
 ];

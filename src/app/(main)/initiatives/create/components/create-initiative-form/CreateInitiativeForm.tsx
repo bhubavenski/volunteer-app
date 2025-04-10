@@ -90,6 +90,7 @@ export function CreateInitiativeForm() {
           author: {
             connect: { id: data!.user.sub },
           },
+          endDate: new Date(new Date().setDate(new Date().getDate() + 7)),
         },
         select: {
           id: true,

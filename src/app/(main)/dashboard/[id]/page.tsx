@@ -6,40 +6,93 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import { Task } from '@prisma/client';
-import { Backlog } from './components/Backlog';
+
+import { Prisma, Sprint, Status, Task } from '@prisma/client';
+
 import { CreateSprintDialog } from './components/CreateSprintDialog';
 import { CreateTaskDialog } from './components/CreateTaskDialog';
+
+import {
+  createTask,
+  getTasks,
+  updateTaskInSprintStages,
+  updateTaskToBacklog,
+  updateTaskToSprint,
+} from '@/actions/tasks.actions';
+import { useParams } from 'next/navigation';
+import {
+  createSprint,
+  CreateSprintResult,
+  getSprints,
+} from '@/actions/sprints.actions';
+import { Backlog } from './components/Backlog';
 import { SprintBoard } from './components/SprintBoard';
-import { Sprint } from './components/types';
 
 export default function Page() {
   // Състояния за задачи, спринтове и диалози
   const [tasks, setTasks] = useState<Task[]>([]);
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [activeSprintId, setActiveSprintId] = useState<string | null>(null);
-  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
   const [isCreateSprintOpen, setIsCreateSprintOpen] = useState(false);
 
-  // Зареждане на данни от localStorage при първоначално зареждане
+  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
+  const { id } = useParams<{ id: string }>();
+  const [status, setStatus] = useState<{
+    state: 'loading' | 'error' | 'success' | null;
+    error: string | null;
+  }>({
+    state: null,
+    error: null,
+  });
+
+  // initiatilize tasks and sprints
   useEffect(() => {
-    const savedTasks = localStorage.getItem('kanban-tasks');
-    const savedSprints = localStorage.getItem('kanban-sprints');
+    async function init() {
+      setStatus({
+        state: 'loading',
+        error: null,
+      });
+      const tasksResponse = await getTasks({
+        where: {
+          initiativeId: id,
+        },
+        include: {
+          assignedTo: true,
+        },
+      });
+      const sprintsResponse = await getSprints({
+        where: {
+          initiativeId: id,
+        },
+      });
+      console.log({ sprintsResponse, tasksResponse });
 
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
-    }
+      if (!tasksResponse.success || !sprintsResponse.success) {
+        setStatus({
+          state: 'error',
+          error: null,
+        });
+        return;
+      }
 
-    if (savedSprints) {
-      const parsedSprints = JSON.parse(savedSprints);
-      setSprints(parsedSprints);
+      setStatus({
+        state: 'success',
+        error: null,
+      });
 
-      // Задаване на активен спринт, ако има такъв
-      if (parsedSprints.length > 0) {
-        setActiveSprintId(parsedSprints[0].id);
+      setTasks(tasksResponse.result);
+      localStorage.setItem('tasks', JSON.stringify(tasksResponse.result));
+
+      setSprints(sprintsResponse.result);
+      localStorage.setItem('sprints', JSON.stringify(sprintsResponse.result));
+
+      if (sprintsResponse.result.length > 0) {
+        setActiveSprintId(sprintsResponse.result[0].id);
+        localStorage.setItem('activeSprintId', sprintsResponse.result[0].id);
       }
     }
-  }, []);
+    init();
+  }, [id, setActiveSprintId]);
 
   // Запазване на данни в localStorage при промяна
   useEffect(() => {
@@ -51,51 +104,89 @@ export default function Page() {
   }, [sprints]);
 
   // Функция за добавяне на нова задача
-  const handleAddTask = (newTask: Task) => {
-    setTasks([...tasks, newTask]);
+  const handleAddTask = async (newTask: Prisma.TaskCreateInput) => {
+    console.log('handleraddtaks=', newTask);
+    const response = await createTask(id, newTask);
+
+    if (!response.success) {
+      console.log('Error occurred in handleAddTask', response.error);
+      return;
+    }
+
+    setTasks([...tasks, response.result]);
     setIsCreateTaskOpen(false);
   };
 
   // Функция за добавяне на нов спринт
-  const handleAddSprint = (newSprint: Sprint) => {
-    const updatedSprints = [...sprints, newSprint];
-    setSprints(updatedSprints);
-    setIsCreateSprintOpen(false);
+  const handleAddSprint = async (
+    newSprint: Parameters<CreateSprintResult>[1]
+  ) => {
+    const response = await createSprint(id, newSprint);
 
-    // Ако това е първият спринт, направете го активен
-    if (updatedSprints.length === 1) {
-      setActiveSprintId(newSprint.id);
+    if (!response.success) {
+      console.log('Error accured in handleAddSprint', response.error);
+      return;
+    }
+
+    setSprints([...sprints, response.result]);
+    setIsCreateSprintOpen(false);
+  };
+
+  // Функция за преместване на задача между спринтовете
+  const handleOnMoveToSprint = async (taskId: string, newSprintId: string) => {
+    console.log(`Moving task ${taskId} to srpint: ${newSprintId}`);
+
+    // Извикваме функцията за актуализиране на базата данни
+    const result = await updateTaskToSprint(taskId, newSprintId);
+
+    if (result.success) {
+      // Актуализираме локалното състояние
+      const updatedTasks = tasks.map((t) =>
+        t.id === taskId ? { ...t, sprintId: newSprintId } : t
+      );
+      setTasks(updatedTasks);
+    } else {
+      console.error('Failed to update task:', result.error);
     }
   };
 
   // Функция за преместване на задача между колоните в спринта
-  const moveTaskInSprint = (
+  const handleMoveTaskInSprintStages = async (
     taskId: string,
-    newStatus: 'todo' | 'in-progress' | 'done'
+    newStatus: Status
   ) => {
-    console.log(`Moving task ${taskId} to ${newStatus}`);
-    const updatedTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, status: newStatus } : task
+    console.log(
+      `Moving task ${taskId} to sprint ${activeSprintId!} with status ${newStatus}`
     );
-    setTasks(updatedTasks);
+
+    const response = await updateTaskInSprintStages(taskId, newStatus);
+
+    if (response.success) {
+      const updatedTasks = tasks.map((task) =>
+        task.id === taskId
+          ? { ...task, sprintId: activeSprintId!, status: newStatus }
+          : task
+      );
+      setTasks(updatedTasks);
+    } else {
+      console.error('Failed to move task to sprint:', response.error);
+    }
   };
 
-  // Функция за преместване на задача от backlog към спринт
-  const moveTaskToSprint = (taskId: string, sprintId: string) => {
-    console.log(`Moving task ${taskId} to sprint ${sprintId}`);
-    const updatedTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, sprintId, status: 'todo' } : task
-    );
-    setTasks(updatedTasks);
-  };
+  // Функция за преместване на задача към баклог
+  const handleMoveTaskToBacklog = async (taskId: string) => {
+    console.log(`Moving task ${taskId} to backlog`);
 
-  // Функция за връщане на задача от спринт в backlog
-  const moveTaskToBacklog = (taskId: string) => {
-    console.log(`Moving task ${taskId} back to backlog`);
-    const updatedTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, sprintId: null, status: null } : task
-    );
-    setTasks(updatedTasks);
+    const response = await updateTaskToBacklog(taskId);
+
+    if (response.success) {
+      const updatedTasks = tasks.map((task) =>
+        task.id === taskId ? { ...task, sprintId: null } : task
+      );
+      setTasks(updatedTasks);
+    } else {
+      console.error('Failed to move task to backlog:', response.error);
+    }
   };
 
   // Филтриране на задачи за backlog (задачи без спринт)
@@ -131,18 +222,24 @@ export default function Page() {
                   value={sprint.id}
                   onClick={() => setActiveSprintId(sprint.id)}
                 >
-                  {sprint.name}
+                  {sprint.title}
                 </TabsTrigger>
               ))}
             </TabsList>
           </div>
 
           <TabsContent value="backlog" className="min-h-[600px]">
-            <Backlog
-              tasks={backlogTasks}
-              sprints={sprints}
-              onMoveToSprint={moveTaskToSprint}
-            />
+            {status.state === 'loading' ? (
+              <div>Зареждане...</div>
+            ) : status.state === 'error' ? (
+              <div className="text-red-500">There no tasks</div>
+            ) : (
+              <Backlog
+                tasks={backlogTasks}
+                sprints={sprints}
+                onMoveToSprint={handleOnMoveToSprint}
+              />
+            )}
           </TabsContent>
 
           {sprints.map((sprint) => (
@@ -154,8 +251,8 @@ export default function Page() {
               <SprintBoard
                 sprint={sprint}
                 tasks={tasks.filter((task) => task.sprintId === sprint.id)}
-                onMoveTask={moveTaskInSprint}
-                onMoveToBacklog={moveTaskToBacklog}
+                handleMoveTaskInSprintStages={handleMoveTaskInSprintStages}
+                onMoveToBacklog={handleMoveTaskToBacklog}
               />
             </TabsContent>
           ))}

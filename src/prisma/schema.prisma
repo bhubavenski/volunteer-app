@@ -20,6 +20,12 @@ enum Status {
   DONE
 }
 
+enum Priority {
+  LOW
+  MID
+  HIGH
+}
+
 model User {
   id          String       @id @default(uuid())
   username    String       @unique
@@ -50,6 +56,7 @@ model Initiative {
   author       User       @relation("InitiativeAuthor", fields: [userId], references: [id])
   userId       String
   totalHours   Int?
+  Sprint       Sprint[]
 }
 
 model Category {
@@ -64,11 +71,41 @@ model Task {
   title        String
   description  String?
   dueDate      DateTime?
+  createAt     DateTime   @default(now())
   assignedTo   User?      @relation(fields: [userId], references: [id])
   userId       String?
   initiative   Initiative @relation(fields: [initiativeId], references: [id])
   initiativeId String
   category     String     @default("main")
+  Sprint       Sprint?    @relation(fields: [sprintId], references: [id])
+  sprintId     String?
+  priority     Priority
+}
+
+model InitiativePDF {
+  id                String      @id @default(uuid())
+  title             String
+  date              DateTime
+  description       String
+  organizer         String
+  location          String?   
+  contact           String?   
+  additionalInfo    String?  
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+
+model Sprint {
+  id           String     @id @default(uuid())
+  title        String
+  description  String
+  startDate    DateTime
+  dueDate      DateTime
+  initiative   Initiative @relation(fields: [initiativeId], references: [id])
+  initiativeId String
+  tasks        Task[]
 }
 
 // model InitiativeParticipants {

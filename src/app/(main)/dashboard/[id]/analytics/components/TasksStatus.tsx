@@ -33,7 +33,7 @@ export default function TasksStatus({
   const taskStatusData = [
     { name: 'Завършени', value: taskStatusCount.DONE, color: '#10b981' },
     { name: 'В процес', value: taskStatusCount.IN_PROGRESS, color: '#3b82f6' },
-    { name: 'Предстоящи', value: taskStatusCount.PENDING, color: '#f59e0b' },
+    // { name: 'Предстоящи', value: taskStatusCount.PENDING, color: '#f59e0b' },
   ];
   console.log({ taskStatusData });
   return (

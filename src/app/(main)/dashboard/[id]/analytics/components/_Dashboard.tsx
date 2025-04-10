@@ -80,7 +80,7 @@ export default async function InitiativeDashboard({
         <TopStats initiativeData={initiativeData} />
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <ActivityDiagram />
+          {/* <ActivityDiagram /> */}
 
           <TasksStatus initiativeData={initiativeData} />
         </div>

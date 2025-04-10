@@ -1,66 +1,78 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import React from 'react';
-import { InitiativeData } from '../../types';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import type { InitiativeData } from "../../types"
+import { Progress } from "@/components/ui/progress"
 
 export default function TaskProgress({
   initiativeData,
 }: {
-  initiativeData: InitiativeData;
+  initiativeData: InitiativeData
 }) {
-  // TODO: opravi logikata tuk
+  const groupTasksByCategory = () => {
+    // Check if initiativeData and tasks exist
+    if (!initiativeData || !initiativeData.tasks || initiativeData.tasks.length === 0) {
+      return []
+    }
 
-  function groupTasksByCategory() {
-    const tasks = initiativeData.tasks;
-    const categoryMap = new Map<string, { name: string; completed: number }>();
+    // Create a map to store tasks grouped by category
+    const categoriesMap = new Map()
 
-    tasks.forEach((task) => {
-      if (!categoryMap.has(task.category)) {
-        categoryMap.set(task.category, { name: task.category, completed: 0 });
+    // Group tasks by category
+    initiativeData.tasks.forEach((task) => {
+      const category = task.category || "Uncategorized"
+
+      if (!categoriesMap.has(category)) {
+        categoriesMap.set(category, {
+          total: 0,
+          completed: 0,
+        })
       }
-    });
 
-    const categoryStats = new Map<string, { total: number; done: number }>();
+      const categoryData = categoriesMap.get(category)
+      categoryData.total += 1
 
-    tasks.forEach((task) => {
-      if (!categoryStats.has(task.category)) {
-        categoryStats.set(task.category, { total: 0, done: 0 });
-      }
-      const stats = categoryStats.get(task.category)!;
-      stats.total += 1;
+      // Increment completed count if task is completed
       if (task.status === 'DONE') {
-        stats.done += 1;
+        categoryData.completed += 1
       }
-    });
+    })
 
-    const result = Array.from(categoryStats.entries()).map(
-      ([category, stats]) => ({
-        name: category,
-        completed: stats.total > 0 ? stats.done / stats.total : 0,
-      })
-    );
+    // Convert map to array and calculate percentages
+    const result = Array.from(categoriesMap.entries()).map(([name, data]) => {
+      const completedPercentage = data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0
 
-    return result;
+      return {
+        name,
+        completed: completedPercentage,
+      }
+    })
+
+    return result
   }
+
+  const categoryProgress = groupTasksByCategory()
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Изпълнение на задачите</CardTitle>
+        <CardTitle>Изпълнени задачи по категория</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {groupTasksByCategory().map((task, index) => (
-            <div key={index} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span>{task.name}</span>
-                <span className="font-bold">{task.completed}%</span>
+          {categoryProgress.length > 0 ? (
+            categoryProgress.map((category, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span>{category.name}</span>
+                  <span className="font-bold">{category.completed}%</span>
+                </div>
+                <Progress value={category.completed} className="h-2" />
               </div>
-              <Progress value={task.completed} className="h-2" />
-            </div>
-          ))}
+            ))
+          ) : (
+            <div>Няма налични задачи</div>
+          )}
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

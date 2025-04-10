@@ -16,36 +16,42 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { Task } from "./types"
+import { Priority, Prisma } from "@prisma/client"
+import { useParams } from "next/navigation"
 
 interface CreateTaskDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onAddTask: (task: Task) => void
+  onAddTask: (task: Prisma.TaskCreateInput) => void
 }
 
 export function CreateTaskDialog({ open, onOpenChange, onAddTask }: CreateTaskDialogProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [priority, setPriority] = useState<"low" | "medium" | "high">("medium")
+  const [category, setCategory] = useState("")
+  const [priority, setPriority] = useState<Priority>('MID')
   const [assignee, setAssignee] = useState("")
+  const { id } = useParams<{ id: string }>();
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!title.trim()) return
 
-    const newTask: Task = {
-      id: crypto.randomUUID(),
+    const newTask: Prisma.TaskCreateInput = {
       title,
       description,
+      category,
       priority,
-      assignee: assignee || undefined,
-      sprintId: null,
-      status: null,
-      createdAt: new Date().toISOString(),
+      status: "TODO",
+      initiative: {
+        connect: {
+          id,
+        }
+      }
     }
-
+    console.log({newTask})
     onAddTask(newTask)
     resetForm()
   }
@@ -53,8 +59,9 @@ export function CreateTaskDialog({ open, onOpenChange, onAddTask }: CreateTaskDi
   const resetForm = () => {
     setTitle("")
     setDescription("")
-    setPriority("medium")
+    setPriority("MID")
     setAssignee("")
+    setCategory("")
   }
 
   return (
@@ -86,17 +93,27 @@ export function CreateTaskDialog({ open, onOpenChange, onAddTask }: CreateTaskDi
                 rows={3}
               />
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="category">Категория</Label>
+              <Input
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Въведете категория на задачата ( по подразбиране е main )"
+                required
+              />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="priority">Приоритет</Label>
-                <Select value={priority} onValueChange={(value: "low" | "medium" | "high") => setPriority(value)}>
+                <Select value={priority} onValueChange={(value: Priority) => setPriority(value)}>
                   <SelectTrigger id="priority">
                     <SelectValue placeholder="Изберете приоритет" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="low">Нисък</SelectItem>
-                    <SelectItem value="medium">Среден</SelectItem>
-                    <SelectItem value="high">Висок</SelectItem>
+                    <SelectItem value="LOW">Нисък</SelectItem>
+                    <SelectItem value="MID">Среден</SelectItem>
+                    <SelectItem value="HIGH">Висок</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
