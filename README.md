@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🫱 Volunteer Initiatives - Information System
 
-## Getting Started
+A project developed as part of an assignment from the **Telecommunications High School – Sofia**, with the support of the **Ministry of Education and Science**.
 
-First, run the development server:
+📌 **Description**  
+An information system for managing volunteer initiatives, aiming to streamline coordination between **administrators**, **organizers**, and **volunteers**. The system provides features for creating and managing events, assigning tasks, tracking progress, and generating reports.
+
+## 🚀 Technologies
+
+The project is built using the following technologies:
+
+- [Next.js](https://nextjs.org/) – React framework for server-side rendering and routing  
+- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework for rapid UI development  
+- [Prisma ORM](https://www.prisma.io/) – ORM for database interaction  
+- [TypeScript](https://www.typescriptlang.org/) – Typed JavaScript for safer, more predictable code  
+- [shadcn/ui](https://ui.shadcn.com/) – Modern UI component library based on Radix UI  
+- [NextAuth.js](https://next-auth.js.org/) – Easy-to-configure authentication library  
+
+## ⚙️ Installation & Setup
+
+### 1. Requirements
+
+- Node.js **v18 or newer**  
+- PostgreSQL database  
+- Git
+
+### 2. Clone the repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/volunteer-system.git
+cd volunteer-system
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Install dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Configure environment
 
-## Learn More
+Create a `.env` file in the root directory and add the following line:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> Replace `user`, `password`, `localhost`, and `dbname` with your local database credentials.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 5. Run migrations and seed the database
 
-## Deploy on Vercel
+```bash
+npx prisma migrate dev
+npx prisma db seed
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧩 Core Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 👥 User and Role Management
+
+- Registration and login via NextAuth  
+- User roles: Administrator, Organizer, Volunteer  
+- Each user has a personal profile with information and role  
+
+### 📅 Event Management
+
+- Create and edit events  
+- Categorize events (environmental, social, cultural, etc.)  
+- Volunteers can register for events  
+
+### ✅ Tasks and Progress
+
+- Create and assign tasks to volunteers  
+- Track completion status  
+- Generate statistics and visualizations (charts, reports)  
+
+## 🧰 Scripts
+
+```bash
+# Start dev server
+npm run dev
+
+# Run migrations
+npx prisma migrate dev
+
+# Seed the database
+npx prisma db seed
+```
+
+## 🌐 Client-Server Architecture
+
+- **Client**: Responsive web interface  
+- **Server**: Next.js API routes using Prisma to access the database  
+
+## 📊 Example Roles and Access
+
+| Role          | Access                                             |
+|---------------|----------------------------------------------------|
+| Administrator | Full access to all features                        |
+| Organizer     | Create events, manage tasks                        |
+| Volunteer     | Register for events, view assigned tasks           |
+
+
+## 📄 Documentation
+
+The project includes:
+
+- Code comments for core functionality  
+- Documented API routes and models  
+- Seed data for faster project setup  
+
+## 👥 Authors
+
+This project was developed by
+
+**Boris Hubavenski**, **Vladislav Stoqnov**, **Daniel Chernev**, **Velizar georgiev**
+
+from the Telecommunications High School – Sofia, as part of an educational initiative to promote digital skills.
