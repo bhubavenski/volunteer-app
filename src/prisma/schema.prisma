@@ -1,0 +1,118 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+enum Role {
+  ADMIN
+  INITIATOR
+  USER
+}
+
+enum Status {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum Priority {
+  LOW
+  MID
+  HIGH
+}
+
+model User {
+  id          String       @id @default(uuid())
+  username    String       @unique
+  email       String       @unique
+  password    String
+  firstName   String?
+  lastName    String?
+  role        Role
+  authored    Initiative[] @relation("InitiativeAuthor")
+  Task        Task[]
+  profileImg  String?
+  initiatives Initiative[] @relation("InitiativeParticipants") // Много към много отношение без references
+}
+
+model Initiative {
+  id           String     @id @default(uuid())
+  title        String
+  description  String
+  excerpt      String
+  location     String
+  startDate    DateTime
+  endDate      DateTime
+  categories   Category[] @relation("InitiativeCategories")
+  participants User[]     @relation("InitiativeParticipants") // Много към много отношение без references
+  mapEmbedUrl  String?
+  imagesUrls   String[]
+  tasks        Task[]
+  author       User       @relation("InitiativeAuthor", fields: [userId], references: [id])
+  userId       String
+  totalHours   Int?
+  Sprint       Sprint[]
+}
+
+model Category {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  initiatives Initiative[] @relation("InitiativeCategories")
+}
+
+model Task {
+  id           String     @id @default(uuid())
+  status       Status
+  title        String
+  description  String?
+  dueDate      DateTime?
+  createAt     DateTime   @default(now())
+  assignedTo   User?      @relation(fields: [userId], references: [id])
+  userId       String?
+  initiative   Initiative @relation(fields: [initiativeId], references: [id])
+  initiativeId String
+  category     String     @default("main")
+  Sprint       Sprint?    @relation(fields: [sprintId], references: [id])
+  sprintId     String?
+  priority     Priority
+}
+
+model InitiativePDF {
+  id                String      @id @default(uuid())
+  title             String
+  date              DateTime
+  description       String
+  organizer         String
+  location          String?   
+  contact           String?   
+  additionalInfo    String?  
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+
+model Sprint {
+  id           String     @id @default(uuid())
+  title        String
+  description  String
+  startDate    DateTime
+  dueDate      DateTime
+  initiative   Initiative @relation(fields: [initiativeId], references: [id])
+  initiativeId String
+  tasks        Task[]
+}
+
+// model InitiativeParticipants {
+//   user         User       @relation(fields: [userId], references: [id])
+//   userId       String
+//   initiative   Initiative @relation(fields: [initiativeId], references: [id])
+//   initiativeId String
+
+//   @@id([userId, initiativeId])
+// }
