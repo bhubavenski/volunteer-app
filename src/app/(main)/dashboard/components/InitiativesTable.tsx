@@ -1,6 +1,6 @@
-'use client';
+"use client"
 
-import * as React from 'react';
+import * as React from "react"
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -12,19 +12,12 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import {
-  ArrowUpDown,
-  Calendar,
-  ChevronDown,
-  Clock,
-  MapPin,
-  MoreHorizontal,
-} from 'lucide-react';
-import { format } from 'date-fns';
+} from "@tanstack/react-table"
+import { ArrowUpDown, Calendar, ChevronDown, Clock, MapPin, MoreHorizontal } from "lucide-react"
+import { format } from "date-fns"
 
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -33,35 +26,25 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Prisma } from '@prisma/client';
-import { getInitiatives } from '@/actions/initiatives.actions';
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import type { Prisma } from "@prisma/client"
+import { getInitiatives } from "@/actions/initiatives.actions"
 
-export type InitiativeWithUser = Prisma.InitiativeGetPayload<{
+type InitiativeWithUser = Prisma.InitiativeGetPayload<{
   include: {
-    user: true;
-  };
-}>;
+    author: true
+  }
+}>
 
 export const columns: ColumnDef<InitiativeWithUser>[] = [
   {
-    id: 'select',
+    id: "select",
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
@@ -77,148 +60,132 @@ export const columns: ColumnDef<InitiativeWithUser>[] = [
     enableHiding: false,
   },
   {
-    id: 'initiative',
-    header: 'Initiative',
+    accessorKey: "title",
+    header: "Title",
+    enableHiding: true,
+  },
+  {
+    id: "initiative",
+    header: "Initiative",
     cell: ({ row }) => {
-      const initiative = row.original;
+      const initiative = row.original
       return (
         <div className="flex items-center gap-3">
           <div className="h-14 w-14 rounded-md overflow-hidden bg-muted flex-shrink-0">
             {initiative.imagesUrls.length > 0 ? (
               <img
-                src={initiative.imagesUrls[0] || '/placeholder.svg'}
+                src={initiative.imagesUrls[0] || "/placeholder.svg"}
                 alt={initiative.title}
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                No image
-              </div>
+              <div className="h-full w-full flex items-center justify-center text-muted-foreground">No image</div>
             )}
           </div>
           <div className="flex flex-col">
             <span className="font-medium line-clamp-1">{initiative.title}</span>
-            <span className="text-xs text-muted-foreground line-clamp-2">
-              {initiative.excerpt}
-            </span>
+            <span className="text-xs text-muted-foreground line-clamp-2">{initiative.excerpt}</span>
           </div>
         </div>
-      );
+      )
     },
     enableSorting: false,
   },
   {
-    accessorKey: 'location',
+    accessorKey: "location",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Location
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      );
+      )
     },
     cell: ({ row }) => (
       <div className="flex items-center gap-1">
         <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-        <span>{row.getValue('location')}</span>
+        <span>{row.getValue("location")}</span>
       </div>
     ),
   },
   {
-    accessorKey: 'startDate',
+    accessorKey: "startDate",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      );
+      )
     },
     cell: ({ row }) => {
-      const initiative = row.original;
-      const startDate = new Date(initiative.startDate);
-      const endDate = new Date(initiative.endDate);
+      const initiative = row.original
+      const startDate = new Date(initiative.startDate)
+      const endDate = new Date(initiative.endDate)
 
-      const isSameDay = startDate.toDateString() === endDate.toDateString();
+      const isSameDay = startDate.toDateString() === endDate.toDateString()
 
       return (
         <div className="flex flex-col">
           <div className="flex items-center gap-1">
             <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-            <span>{format(startDate, 'MMM d, yyyy')}</span>
+            <span>{format(startDate, "MMM d, yyyy")}</span>
           </div>
           {!isSameDay && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <span>to {format(endDate, 'MMM d, yyyy')}</span>
+              <span>to {format(endDate, "MMM d, yyyy")}</span>
             </div>
           )}
         </div>
-      );
+      )
     },
   },
   {
-    accessorKey: 'totalHours',
+    accessorKey: "totalHours",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Hours
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      );
+      )
     },
     cell: ({ row }) => {
-      const hours = row.getValue('totalHours') as number | null;
+      const hours = row.getValue("totalHours") as number | null
 
       return (
         <div className="flex items-center gap-1">
           <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-          <span>{hours !== null ? hours : 'N/A'}</span>
+          <span>{hours !== null ? hours : "N/A"}</span>
         </div>
-      );
+      )
     },
   },
   {
-    id: 'creator',
-    header: 'Created By',
+    id: "creator",
+    header: "Created By",
     cell: ({ row }) => {
-      const initiative = row.original;
-      const user = initiative.user;
+      const initiative = row.original
+      const user = initiative.author
 
       return (
         <div className="flex items-center gap-2">
           <Avatar className="h-6 w-6">
-            <AvatarImage
-              src={user.profileImg || undefined}
-              alt={user.username}
-            />
-            <AvatarFallback>
-              {user.firstName?.charAt(0) ||
-                user.username.charAt(0).toUpperCase()}
-            </AvatarFallback>
+            <AvatarImage src={user.profileImg || undefined} alt={user.username} />
+            <AvatarFallback>{user.firstName?.charAt(0) || user.username.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
           <span className="text-sm">
-            {user.firstName && user.lastName
-              ? `${user.firstName} ${user.lastName}`
-              : user.username}
+            {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username}
           </span>
         </div>
-      );
+      )
     },
   },
   {
-    id: 'actions',
+    id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const initiative = row.original;
+      const initiative = row.original
 
       return (
         <DropdownMenu>
@@ -230,52 +197,47 @@ export const columns: ColumnDef<InitiativeWithUser>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(initiative.id)}
-            >
-              Copy ID
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(initiative.id)}>Copy ID</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
             <DropdownMenuItem>Edit initiative</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">
-              Delete initiative
-            </DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive">Delete initiative</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      );
+      )
     },
   },
-];
+]
 
 export function InitiativesTable() {
-  const [initiatives, setInitiatives] = React.useState<InitiativeWithUser[]>(
-    []
-  );
-  const [loading, setLoading] = React.useState(true);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [initiatives, setInitiatives] = React.useState<InitiativeWithUser[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+    title: false,
+  })
+  const [rowSelection, setRowSelection] = React.useState({})
 
   React.useEffect(() => {
     async function fetchInitiatives() {
       try {
-        const result = await getInitiatives({});
-        setInitiatives(result);
+        const result = await getInitiatives({
+          include: {
+            author: true,
+          },
+        } satisfies Prisma.InitiativeFindManyArgs)
+        setInitiatives(result)
       } catch (error) {
-        console.error('Error fetching initiatives:', error);
+        console.error("Error fetching initiatives:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
-    fetchInitiatives();
-  }, []);
+    fetchInitiatives()
+  }, [])
 
   const table = useReactTable({
     data: initiatives,
@@ -294,12 +256,10 @@ export function InitiativesTable() {
       columnVisibility,
       rowSelection,
     },
-  });
+  })
 
   if (loading) {
-    return (
-      <div className="flex justify-center p-8">Loading initiatives...</div>
-    );
+    return <div className="flex justify-center p-8">Loading initiatives...</div>
   }
 
   return (
@@ -307,10 +267,8 @@ export function InitiativesTable() {
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter by title..."
-          value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('title')?.setFilterValue(event.target.value)
-          }
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => table.getColumn("title")?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>
@@ -329,13 +287,11 @@ export function InitiativesTable() {
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                );
+                )
               })}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -348,14 +304,9 @@ export function InitiativesTable() {
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -363,26 +314,15 @@ export function InitiativesTable() {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No initiatives found.
                 </TableCell>
               </TableRow>
@@ -392,8 +332,8 @@ export function InitiativesTable() {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} initiative(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} initiative(s)
+          selected.
         </div>
         <div className="space-x-2">
           <Button
@@ -404,16 +344,11 @@ export function InitiativesTable() {
           >
             Previous
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             Next
           </Button>
         </div>
       </div>
     </div>
-  );
+  )
 }
