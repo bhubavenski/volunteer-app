@@ -2,7 +2,7 @@
 
 import { HelpCircle, Trash2, LogOut } from 'lucide-react';
 import React from 'react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { deleteUser } from '@/actions/users/auth.actions';
@@ -37,9 +37,10 @@ export default function Settings({
 }: ProfileAdditionalOptionsProps) {
   const toast = useToastContext();
   const { id } = useParams<{ id: string }>();
+  const { data } = useSession();
 
   const defaultHandleDelete = async () => {
-    const result = await deleteUser();
+    const result = await deleteUser(data!.user.email!);
     if (result?.error) {
       return toast({
         variant: 'destructive',
@@ -86,7 +87,10 @@ export default function Settings({
       </CardHeader>
       <CardContent className="space-y-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-8"
+          >
             <FormField
               control={form.control}
               name="firstName"
@@ -100,7 +104,7 @@ export default function Settings({
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="lastName"
               render={({ field }) => (

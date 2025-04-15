@@ -4,8 +4,6 @@ import bcrypt from 'bcryptjs';
 import { getErrorMessage, validateSchema } from '@/lib/utils';
 import { SignUpValues, SignUpSchema } from '@/schemas/forms/SignUpFormSchema';
 import { db } from '@/prisma/db';
-import { authOptions } from '@/app/api/auth/[...nextauth]/options';
-import { getServerSession } from 'next-auth';
 
 export async function registerUser(body: SignUpValues) {
   const validatedFields = validateSchema(SignUpSchema, body);
@@ -46,17 +44,11 @@ export async function registerUser(body: SignUpValues) {
   }
 }
 
-export const deleteUser = async () => {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.email) {
-    return { error: 'User is not authenticated or session is invalid' };
-  }
-
+export const deleteUser = async (email:string) => {
   try {
     await db.user.delete({
       where: {
-        email: session.user.email,
+        email,
       },
     });
   } catch (error) {
