@@ -26,6 +26,7 @@ import { createCategory } from '@/actions/categories.actions';
 import { AppLinks } from '@/constants/AppLinks';
 import { useSession } from 'next-auth/react';
 import { formSchema } from './schema.resolver';
+import { uploadImageToImgur } from '@/lib/upload-image';
 
 interface UploadedImage {
   id: string;
@@ -59,8 +60,15 @@ export function CreateInitiativeForm() {
   }
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
+    const imgArr = [];
+
     try {
       // images, categories and initiative must be in transactions
+
+      uploadedImages.forEach(async (img) => {
+        const url = await uploadImageToImgur(img);
+        imgArr.push(url);
+      });
 
       const categoriesIds = await Promise.all(
         values.categories.map((category) =>
@@ -73,7 +81,7 @@ export function CreateInitiativeForm() {
         )
       );
 
-      //TODO: make it more orginized, there too much of whats going on on the screen
+      //TODO: make it more orginized, there are too much of whats going on on the screen
       const initiative = await createInitiative({
         data: {
           title: values.title,
@@ -87,6 +95,7 @@ export function CreateInitiativeForm() {
               id: category.id,
             })),
           },
+          imagesUrls: imgArr,
           author: {
             connect: { id: data!.user.sub },
           },

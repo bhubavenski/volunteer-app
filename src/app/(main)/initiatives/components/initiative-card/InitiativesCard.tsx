@@ -52,7 +52,7 @@ export default function InitiativeCard({
       </CardContent>
       <CardFooter>
         <Link
-          href={`${AppLinks.INITIATIVES_LIST}/${initiative.id}`}
+          href={`${AppLinks.INITIATIVE}/${initiative.id}`}
           className="w-full"
         >
           <Button className="w-full text-xl">Details</Button>

@@ -31,7 +31,7 @@ export default async function page() {
     <>
       {/* <LayoutNav /> */}
       <Tabs defaultValue="initiativeTab">
-        <TabsList>
+        <TabsList className='mb-10'>
           <TabsTrigger value="initiativeTab">Your initiatives</TabsTrigger>
           {session.user.role === Role.ADMIN && (
             <>

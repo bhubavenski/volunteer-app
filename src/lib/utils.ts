@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatDate(date: Date) {
   return date.toLocaleString('bg-BG', {
-    weekday: 'long', // Дни от седмицата
+    weekday: 'long', 
     year: 'numeric',
     month: 'long',
     day: 'numeric',
