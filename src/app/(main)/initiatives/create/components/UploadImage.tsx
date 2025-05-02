@@ -21,6 +21,7 @@ export default function UploadImage({
   uploadedImages: UploadedImage[];
   setUploadedImages: Dispatch<SetStateAction<UploadedImage[]>>;
 }) {
+  
   const handleImageUpload = (file: File) => {
     if (!['image/png', 'image/jpeg'].includes(file.type)) {
       setError('Моля, качете само PNG или JPEG изображения.');

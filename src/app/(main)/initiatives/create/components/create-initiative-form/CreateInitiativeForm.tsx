@@ -26,19 +26,13 @@ import { createCategory } from '@/actions/categories.actions';
 import { AppLinks } from '@/constants/AppLinks';
 import { useSession } from 'next-auth/react';
 import { formSchema } from './schema.resolver';
-import { uploadImageToImgur } from '@/lib/upload-image';
-
-interface UploadedImage {
-  id: string;
-  url: string;
-  type: string;
-}
+import { uploadImageToImgur } from '@/actions/upload';
 
 export function CreateInitiativeForm() {
   const router = useRouter();
   const { data } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,7 +45,6 @@ export function CreateInitiativeForm() {
       location: '',
       mapEmbedUrl: '',
       categories: [],
-      maxParticipants: 1,
     },
   });
 
@@ -60,16 +53,14 @@ export function CreateInitiativeForm() {
   }
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-    const imgArr = [];
-
+  
     try {
-      // images, categories and initiative must be in transactions
-
-      uploadedImages.forEach(async (img) => {
-        const url = await uploadImageToImgur(img);
-        imgArr.push(url);
-      });
-
+      // Качи изображенията и събери URL адресите
+      const imgArr = await Promise.all(
+        uploadedImages.map((img) => uploadImageToImgur(img))
+      );
+      console.log('imgArr', imgArr);
+      // Създай категориите и събери ID-тата
       const categoriesIds = await Promise.all(
         values.categories.map((category) =>
           createCategory({
@@ -80,8 +71,7 @@ export function CreateInitiativeForm() {
           })
         )
       );
-
-      //TODO: make it more orginized, there are too much of whats going on on the screen
+  
       const initiative = await createInitiative({
         data: {
           title: values.title,
@@ -95,7 +85,7 @@ export function CreateInitiativeForm() {
               id: category.id,
             })),
           },
-          imagesUrls: imgArr,
+          imagesUrls: imgArr.filter((url) => url !== null) as string[],
           author: {
             connect: { id: data!.user.sub },
           },
@@ -105,12 +95,12 @@ export function CreateInitiativeForm() {
           id: true,
         },
       });
-
+  
       toast({
         title: 'The initiative was successfully created!',
         description: 'The new initiative has been added to the system.',
       });
-
+  
       router.push(`${AppLinks.INITIATIVE}/${initiative.id}`);
     } catch (error: unknown) {
       console.log(getErrorMessage(error));
@@ -123,6 +113,7 @@ export function CreateInitiativeForm() {
       setIsSubmitting(false);
     }
   }
+  
 
   return (
     <Form {...form}>
@@ -255,24 +246,6 @@ export function CreateInitiativeForm() {
                   categories={field.value}
                   setCategories={field.onChange}
                   {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="maxParticipants"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Maximum number of participants</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
                 />
               </FormControl>
               <FormMessage />

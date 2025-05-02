@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { CalendarIcon, Clock, MapPin, Users } from 'lucide-react';
 import React from 'react';
 import { InitiativeWithParticipantsCount } from '../page';
+import { formatDate } from '@/lib/utils';
 
 export default function DetailsCard({
   initiative,
@@ -28,8 +29,7 @@ export default function DetailsCard({
           </div>
           <div className="flex items-center">
             <Clock className="mr-2 h-5 w-5 text-muted-foreground" />
-            {/* <span>{initiative.time}</span> */}
-            12:11
+            <span>{`до ${formatDate(initiative.endDate)}`}</span>
           </div>
           <div className="flex items-center">
             <MapPin className="mr-2 h-5 w-5 text-muted-foreground" />
@@ -37,7 +37,7 @@ export default function DetailsCard({
           </div>
           <div className="flex items-center">
             <Users className="mr-2 h-5 w-5 text-muted-foreground" />
-            <span>10 participants</span>
+            <span>{`${initiative._count.participants} participants`}</span>
           </div>
         </div>
       </CardContent>

@@ -16,6 +16,7 @@ import { InitiativeWithParticipantsCount } from '../page';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { AppLinks } from '@/constants/AppLinks';
+import { addUserToInitiative } from '@/actions/initiatives.actions';
 
 export default function SignUpVolunteer({
   initiative,
@@ -27,11 +28,23 @@ export default function SignUpVolunteer({
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsDialogOpen(false);
     setName('');
     setEmail('');
+
+    if (!data?.user?.sub) {
+      console.error('User ID is undefined');
+      return; 
+    }
+  
+    try {
+      await addUserToInitiative(initiative.id, data.user.sub);
+      console.log('User added to initiative successfully!');
+    } catch (error) {
+      console.error('Error adding user to initiative:', error);
+    }
   };
 
   return (

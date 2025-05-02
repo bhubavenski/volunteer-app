@@ -20,6 +20,38 @@ export async function getUniqueLocations() {
   return locations.map((initiative) => initiative.location);
 }
 
+
+export async function deteleInitiative(initiativeId: string) {
+  return db.initiative.delete({
+    where: {
+      id: initiativeId,
+    },
+  });
+}
+
+export async function addUserToInitiative(
+  initiativeId: string,
+  userId: string
+) {
+  if (!userId) {
+    throw new Error('User ID is required');
+  }
+
+  console.log({ userId, initiativeId });
+  return db.initiative.update({
+    where: {
+      id: initiativeId,
+    },
+    data: {
+      participants: {
+        connect: {
+          id: userId, 
+        },
+      },
+    },
+  });
+}
+
 export async function createInitiative(
   initiative: Prisma.InitiativeCreateArgs
 ) {

@@ -117,8 +117,8 @@ export const columns: ColumnDef<UserWithoutPassword>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id)}>Copy user ID</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit user</DropdownMenuItem>
-            <DropdownMenuItem>View profile</DropdownMenuItem>
+            {/* <DropdownMenuItem>Edit user</DropdownMenuItem>
+            <DropdownMenuItem>View profile</DropdownMenuItem> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-destructive" onClick={()=>deleteUser(user.email)}>Delete user</DropdownMenuItem>
           </DropdownMenuContent>

@@ -45,7 +45,7 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { Prisma } from '@prisma/client';
-import { getInitiatives } from '@/actions/initiatives.actions';
+import { deteleInitiative, getInitiatives } from '@/actions/initiatives.actions';
 
 type InitiativeWithUser = Prisma.InitiativeGetPayload<{
   include: {
@@ -241,10 +241,10 @@ export const columns: ColumnDef<InitiativeWithUser>[] = [
               Copy ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit initiative</DropdownMenuItem>
+            {/* <DropdownMenuItem>View details</DropdownMenuItem>
+            <DropdownMenuItem>Edit initiative</DropdownMenuItem> */}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">
+            <DropdownMenuItem className="text-destructive" onClick={()=>deteleInitiative(initiative.id)}>
               Delete initiative
             </DropdownMenuItem>
           </DropdownMenuContent>

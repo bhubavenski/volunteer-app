@@ -48,7 +48,7 @@ export const formSchema = z.object({
     .refine((data) => data.length > 0, {
       message: 'At least one category is required.',
     }),
-  maxParticipants: z.number().min(1, {
-    message: 'There must be at least 1 participant.',
-  }),
+  // maxParticipants: z.number().min(1, {
+  //   message: 'There must be at least 1 participant.',
+  // }),
 });

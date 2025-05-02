@@ -9,7 +9,7 @@ import { Role } from '@prisma/client';
 
 export default function Header() {
   return (
-    <header className="py-1 flex bg-white dark:bg-black justify-between z-10 shadow-lg sticky top-0 items-center px-6">
+    <header className="py-1 flex bg-white dark:bg-[#020713] justify-between z-10 shadow-lg sticky top-0 items-center px-6">
       <Link href="/">
         <AppLogo width={150} height={70} className="dark:fill-white" />
       </Link>

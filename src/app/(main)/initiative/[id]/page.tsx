@@ -8,6 +8,8 @@ import { Prisma } from '@prisma/client';
 
 export type InitiativeWithParticipantsCount = Prisma.InitiativeGetPayload<{
   select: {
+    endDate: true,
+    id: true;
     title: true;
     startDate: true;
     description: true;
@@ -34,6 +36,8 @@ export default async function InitiativePage({
       id,
     },
     select: {
+      endDate: true,
+      id: true,
       title: true,
       startDate: true,
       description: true,
@@ -45,6 +49,7 @@ export default async function InitiativePage({
           participants: true,
         },
       },
+
     },
   });
 
