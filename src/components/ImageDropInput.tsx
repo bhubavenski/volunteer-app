@@ -91,4 +91,3 @@ export const ImageDropInput: React.FC<ImageDropInputProps> = ({ onImageUpload, m
     </div>
   )
 }
-

@@ -1,27 +1,32 @@
 'use server'
-// /app/upload-image/route.ts
 
-export async function uploadImageToImgur(imageBase64: string) {
-  const clientId = process.env.IMGUR_CLIENT_ID;
+import { UploadedImage } from "@/app/(main)/initiatives/create/components/UploadImage"
 
-  if (!clientId) {
-    throw new Error('Imgur Client ID not set');
+export async function uploadImagesToImgur(images: UploadedImage[], clientId: string): Promise<string[]> {
+  const uploadedLinks: string[] = []
+
+  for (const image of images) {
+    const base64Data = image.url.split(',')[1] // премахваме data:image/...;base64,
+
+    const formData = new FormData()
+    formData.append('image', base64Data)
+    formData.append('type', 'base64')
+
+    const res = await fetch('https://api.imgur.com/3/image', {
+      method: 'POST',
+      headers: {
+        Authorization: `Client-ID ${clientId}`,
+      },
+      body: formData,
+    })
+
+    if (!res.ok) {
+      throw new Error(`Upload failed for image ${image.id}`)
+    }
+
+    const data = await res.json()
+    uploadedLinks.push(data.data.link)
   }
 
-  const response = await fetch('https://api.imgur.com/3/image', {
-    method: 'POST',
-    headers: {
-      Authorization: `Client-ID ${clientId}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ image: imageBase64 }),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data?.data?.error || 'Failed to upload image');
-  }
-
-  return data.data.link;
+  return uploadedLinks
 }

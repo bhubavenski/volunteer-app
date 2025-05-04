@@ -4,7 +4,7 @@ import { ImageDropInput } from '@/components/ImageDropInput';
 import { X } from 'lucide-react';
 import Image from 'next/image';
 
-interface UploadedImage {
+export interface UploadedImage {
   id: string;
   url: string;
   type: string;

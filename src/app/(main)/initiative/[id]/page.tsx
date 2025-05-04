@@ -5,10 +5,11 @@ import { db } from '@/prisma/db';
 import { notFound } from 'next/navigation';
 import CarouselCard from './components/CarouselCard';
 import { Prisma } from '@prisma/client';
+import { sanitize } from '@/lib/utils';
 
 export type InitiativeWithParticipantsCount = Prisma.InitiativeGetPayload<{
   select: {
-    endDate: true,
+    endDate: true;
     id: true;
     title: true;
     startDate: true;
@@ -49,7 +50,6 @@ export default async function InitiativePage({
           participants: true,
         },
       },
-
     },
   });
 
@@ -67,7 +67,10 @@ export default async function InitiativePage({
 
       <div>
         <h2 className="text-2xl font-semibold mb-4">Description</h2>
-        <p className="text-muted-foreground">{initiative.description}</p>
+        <p
+          className="text-muted-foreground"
+          dangerouslySetInnerHTML={{ __html: sanitize(initiative.description) }}
+        />
       </div>
 
       {/* <CalendarCard initiative={initiative} /> */}

@@ -19,20 +19,20 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
 import Tiptap from '@/components/TipTap';
-import UploadImage from '../UploadImage';
 import { CategoriesInput } from '../CategoriesInput';
 import { createInitiative } from '@/actions/initiatives.actions';
 import { createCategory } from '@/actions/categories.actions';
 import { AppLinks } from '@/constants/AppLinks';
 import { useSession } from 'next-auth/react';
 import { formSchema } from './schema.resolver';
-import { uploadImageToImgur } from '@/actions/upload';
+import UploadImage, { UploadedImage } from '../UploadImage';
+import { uploadImagesToImgur } from '@/actions/upload';
 
 export function CreateInitiativeForm() {
   const router = useRouter();
   const { data } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,14 +53,23 @@ export function CreateInitiativeForm() {
   }
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-  
+    let imgLinksArr:string[] = [];
     try {
-      // Качи изображенията и събери URL адресите
-      const imgArr = await Promise.all(
-        uploadedImages.map((img) => uploadImageToImgur(img))
-      );
-      console.log('imgArr', imgArr);
-      // Създай категориите и събери ID-тата
+      try {
+        imgLinksArr = await uploadImagesToImgur(
+          uploadedImages,
+          process.env.NEXT_PUBLIC_IMGUR_CLIENT_ID!
+        );
+        console.log('Uploaded links:', imgLinksArr);
+      } catch (uploadError) {
+        console.error("Error uploading images to Imgur:", uploadError)
+        toast({
+          title: "Error uploading images",
+          description: "Failed to upload one or more images, but continuing with initiative creation.",
+          variant: "destructive",
+        })
+      }
+
       const categoriesIds = await Promise.all(
         values.categories.map((category) =>
           createCategory({
@@ -71,7 +80,7 @@ export function CreateInitiativeForm() {
           })
         )
       );
-  
+
       const initiative = await createInitiative({
         data: {
           title: values.title,
@@ -85,7 +94,7 @@ export function CreateInitiativeForm() {
               id: category.id,
             })),
           },
-          imagesUrls: imgArr.filter((url) => url !== null) as string[],
+          imagesUrls: imgLinksArr,
           author: {
             connect: { id: data!.user.sub },
           },
@@ -95,12 +104,12 @@ export function CreateInitiativeForm() {
           id: true,
         },
       });
-  
+
       toast({
         title: 'The initiative was successfully created!',
         description: 'The new initiative has been added to the system.',
       });
-  
+
       router.push(`${AppLinks.INITIATIVE}/${initiative.id}`);
     } catch (error: unknown) {
       console.log(getErrorMessage(error));
@@ -113,7 +122,6 @@ export function CreateInitiativeForm() {
       setIsSubmitting(false);
     }
   }
-  
 
   return (
     <Form {...form}>

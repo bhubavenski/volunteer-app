@@ -2,6 +2,19 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { z } from 'zod';
 
+// lib/sanitize-html.ts
+import sanitizeHtml from 'sanitize-html'
+
+export function sanitize(html: string) {
+  return sanitizeHtml(html, {
+    allowedTags: ['b', 'i', 'em', 'strong', 'a', 'p', 'ul', 'ol', 'li', 'br'],
+    allowedAttributes: {
+      a: ['href', 'target'],
+    },
+  })
+}
+
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
