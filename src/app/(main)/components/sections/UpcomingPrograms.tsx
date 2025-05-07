@@ -1,20 +1,31 @@
 import React from 'react';
-import { ProgramCard } from '../program-card';
 import { db } from '@/prisma/db';
+import { Prisma } from '@prisma/client';
+import { SmallProgramCard } from '@/components/small-img-card';
+import NoInitiativesFound from '../../initiatives/components/NoInitiativesFound';
 
+export type Program = Prisma.InitiativeGetPayload<{
+  select: {
+    id: true;
+    title: true;
+    description: true;
+    endDate: true;
+    location: true;
+    imagesUrls: true;
+  };
+}>;
 export default async function UpcomingPrograms() {
-  const programs = await db.initiative.findMany({
+  const programs: Program[] = await db.initiative.findMany({
     orderBy: {
       startDate: 'desc',
     },
     take: 3,
     select: {
       id: true,
-      startDate: true,
-      location: true,
       title: true,
-      excerpt: true,
-      categories: true,
+      description: true,
+      endDate: true,
+      location: true,
       imagesUrls: true,
     },
   });
@@ -26,9 +37,17 @@ export default async function UpcomingPrograms() {
           Upcoming volunteer programs
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {programs.map((program, index) => (
-            <ProgramCard key={index} initiative={program} className="h-full" />
-          ))}
+          {programs.length ? programs.map((program) => (
+            <SmallProgramCard
+              key={program.id}
+              id={program.id}
+              title={program.title}
+              description={program.description}
+              date={new Date(program.endDate).toLocaleDateString('bg-BG')} // или ISO формат, ако предпочиташ
+              location={program.location}
+              imageUrl={program.imagesUrls[0]}
+            />
+          )) : <NoInitiativesFound/>}
         </div>
       </div>
     </section>

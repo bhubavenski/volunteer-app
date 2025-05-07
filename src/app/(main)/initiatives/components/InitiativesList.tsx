@@ -4,6 +4,9 @@ import InitiativeCard from './initiative-card/InitiativesCard';
 import { InitiativesPageSearchParams, InitiativeWithCategories } from '../page';
 import { useEffect, useMemo, useState } from 'react';
 import { getInitiatives } from '@/actions/initiatives.actions';
+import NoInitiativesFound from './NoInitiativesFound';
+
+
 
 export default function InitiativesList({
   filters,
@@ -54,7 +57,7 @@ export default function InitiativesList({
           />
         ))
       ) : (
-        <div>No initiatives found</div>
+        <NoInitiativesFound/>
       )}
     </div>
   );

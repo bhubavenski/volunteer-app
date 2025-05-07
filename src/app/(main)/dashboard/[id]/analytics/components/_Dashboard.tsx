@@ -9,7 +9,6 @@ import OverviewTab from './tabs/overview/OverviewTab';
 import TasksTab from './tabs/tasks/TasksTab';
 import VolunteersTab from './tabs/volunteers/VolunteersTab';
 import ImpactTab from './tabs/impact/ImpactTab';
-import ActivityDiagram from './ActivityDiagram';
 import { InitiativeData } from './types';
 
 export default async function InitiativeDashboard({
@@ -99,7 +98,7 @@ export default async function InitiativeDashboard({
 
           <VolunteersTab initiativeData={initiativeData} />
 
-          <ImpactTab initiativeData={initiativeData} />
+          <ImpactTab />
         </Tabs>
       </div>
     </div>

@@ -45,7 +45,11 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { Prisma } from '@prisma/client';
-import { deteleInitiative, getInitiatives } from '@/actions/initiatives.actions';
+import {
+  deteleInitiative,
+  getInitiatives,
+} from '@/actions/initiatives.actions';
+import Image from 'next/image';
 
 type InitiativeWithUser = Prisma.InitiativeGetPayload<{
   include: {
@@ -90,11 +94,14 @@ export const columns: ColumnDef<InitiativeWithUser>[] = [
         <div className="flex items-center gap-3">
           <div className="h-14 w-14 rounded-md overflow-hidden bg-muted flex-shrink-0">
             {initiative.imagesUrls.length > 0 ? (
-              <img
-                src={initiative.imagesUrls[0] || '/placeholder.svg'}
-                alt={initiative.title}
-                className="h-full w-full object-cover"
-              />
+              <div className="relative h-64 w-full">
+                <Image
+                  src={initiative.imagesUrls[0] || '/placeholder.svg'}
+                  alt={initiative.title}
+                  fill={true}
+                  className="object-cover"
+                />
+              </div>
             ) : (
               <div className="h-full w-full flex items-center justify-center text-muted-foreground">
                 No image
@@ -244,7 +251,10 @@ export const columns: ColumnDef<InitiativeWithUser>[] = [
             {/* <DropdownMenuItem>View details</DropdownMenuItem>
             <DropdownMenuItem>Edit initiative</DropdownMenuItem> */}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive" onClick={()=>deteleInitiative(initiative.id)}>
+            <DropdownMenuItem
+              className="text-destructive"
+              onClick={() => deteleInitiative(initiative.id)}
+            >
               Delete initiative
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -308,7 +318,9 @@ export function InitiativesTable() {
   });
 
   if (loading) {
-    return <div className="flex justify-center p-8">Loading initiatives...</div>
+    return (
+      <div className="flex justify-center p-8">Loading initiatives...</div>
+    );
   }
 
   return (

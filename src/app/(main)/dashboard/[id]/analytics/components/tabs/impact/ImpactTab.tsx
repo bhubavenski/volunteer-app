@@ -7,13 +7,8 @@ import {
 } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import React from 'react';
-import { InitiativeData } from '../../types';
 
-export default function ImpactTab({
-  initiativeData,
-}: {
-  initiativeData: InitiativeData;
-}) {
+export default function ImpactTab() {
   return (
     <TabsContent value="impact" className="space-y-4">
       {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

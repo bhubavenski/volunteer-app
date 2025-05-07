@@ -2,10 +2,10 @@
 
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import React, { useState } from 'react';
-import { type Task } from '../../[id]/components/TasksDashboard';
 
 import TaskDialog from './TaskDialog';
 import { AssignTo } from './AssignTo';
+import { type Task } from '@prisma/client';
 
 export default function Task({ task }: { task: Task }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

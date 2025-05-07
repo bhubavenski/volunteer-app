@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 // import { Progress } from '@radix-ui/react-progress';
-import { Users, ArrowUpRight, Clock, CheckSquare } from 'lucide-react';
+import { Users, CheckSquare } from 'lucide-react';
 import React from 'react';
 import { InitiativeData } from './types';
 
