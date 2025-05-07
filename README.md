@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 # volunteer-app
-=======
+
 # 🫱 Volunteer Initiatives - Information System
 
 A project developed as part of an assignment from the **Telecommunications High School – Sofia**, with the support of the **Ministry of Education and Science**.
