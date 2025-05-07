@@ -45,9 +45,11 @@ Create a `.env` file in the root directory and add the following line:
 
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+NEXT_PUBLIC_IMGUR_CLIENT_ID=your_id
 ```
 
 > Replace `user`, `password`, `localhost`, and `dbname` with your local database credentials.
+> Replace `your_id` with your client id from imgur.
 
 ### 5. Run migrations and seed the database
 
