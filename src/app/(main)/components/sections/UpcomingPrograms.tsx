@@ -8,7 +8,7 @@ export type Program = Prisma.InitiativeGetPayload<{
   select: {
     id: true;
     title: true;
-    description: true;
+    excerpt: true;
     endDate: true;
     location: true;
     imagesUrls: true;
@@ -23,7 +23,7 @@ export default async function UpcomingPrograms() {
     select: {
       id: true,
       title: true,
-      description: true,
+      excerpt: true,
       endDate: true,
       location: true,
       imagesUrls: true,
@@ -37,17 +37,24 @@ export default async function UpcomingPrograms() {
           Upcoming volunteer programs
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {programs.length ? programs.map((program) => (
-            <SmallProgramCard
-              key={program.id}
-              id={program.id}
-              title={program.title}
-              description={program.description}
-              date={new Date(program.endDate).toLocaleDateString('bg-BG')} // или ISO формат, ако предпочиташ
-              location={program.location}
-              imageUrl={program.imagesUrls[0]}
-            />
-          )) : <NoInitiativesFound/>}
+          {programs.length ? (
+            programs.map((program) => {
+              console.log(program)
+              return (
+                <SmallProgramCard
+                  key={program.id}
+                  id={program.id}
+                  title={program.title}
+                  description={program.excerpt}
+                  date={new Date(program.endDate).toLocaleDateString('bg-BG')} // или ISO формат, ако предпочиташ
+                  location={program.location}
+                  imageUrl={program.imagesUrls[0]}
+                />
+              );
+            })
+          ) : (
+            <NoInitiativesFound />
+          )}
         </div>
       </div>
     </section>
