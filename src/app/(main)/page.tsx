@@ -4,6 +4,8 @@ import ProgramsSection from './components/sections/ProgramsSection';
 import SignupSection from './components/sections/SignupSection';
 import UpcomingPrograms from './components/sections/UpcomingPrograms';
 
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   return (
     <>
