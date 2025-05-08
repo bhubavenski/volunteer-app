@@ -14,6 +14,8 @@ import Link from 'next/link';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { LogOut, User } from 'lucide-react';
 import { AppLinks } from '@/constants/AppLinks';
+import { Role } from '@prisma/client';
+import AuthWrraper from './header/AuthWrraper';
 
 export default function UserDropdownMenu({
   username,
@@ -48,10 +50,12 @@ export default function UserDropdownMenu({
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer flex justify-between">
-          <Link href={AppLinks.DASHBOARD}>Dashboard</Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
+        <AuthWrraper role={[Role.INITIATOR, Role.ADMIN]}>
+          <DropdownMenuItem className="cursor-pointer flex justify-between">
+            <Link href={AppLinks.DASHBOARD}>Dashboard</Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+        </AuthWrraper>
         <DropdownMenuItem
           onClick={() => signOut()}
           className="cursor-pointer flex justify-between"

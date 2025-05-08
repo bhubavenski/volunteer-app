@@ -17,7 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal, ArrowRight } from 'lucide-react';
 import { Sprint, Task } from '@prisma/client';
-import { useRef } from 'react';
+import { MutableRefObject, useCallback, useRef } from 'react';
 
 interface BacklogProps {
   tasks: Task[];
@@ -88,6 +88,12 @@ export function BacklogTaskCard({
 
   const ref = useRef<HTMLDivElement>(null);
 
+  const setRef = useCallback((node: HTMLDivElement | null) => {
+    if (node) {
+      drag(node);
+    }
+    (ref as MutableRefObject<HTMLDivElement | null>).current = node;
+  }, [drag]);
   // Форматиране на дата
   // const formattedDate = new Date(task.createAt).toLocaleDateString('bg-BG', {
   //   day: 'numeric',
@@ -97,10 +103,7 @@ export function BacklogTaskCard({
 
   return (
     <Card
-      ref={(node) => {
-        ref.current = node;
-        drag(node);
-      }}
+      ref={setRef}
       className={`cursor-move ${isDragging ? 'opacity-50' : ''}`}
     >
       <CardHeader className="p-4 pb-2">
