@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import type * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -25,7 +25,7 @@ import { createCategory } from '@/actions/categories.actions';
 import { AppLinks } from '@/constants/AppLinks';
 import { useSession } from 'next-auth/react';
 import { formSchema } from './schema.resolver';
-import UploadImage, { UploadedImage } from '../UploadImage';
+import UploadImage, { type UploadedImage } from '../UploadImage';
 import { uploadImagesToImgur } from '@/actions/upload';
 
 export function CreateInitiativeForm() {
@@ -51,9 +51,10 @@ export function CreateInitiativeForm() {
   if (!data) {
     return <>You cant see this page</>;
   }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-    let imgLinksArr:string[] = [];
+    let imgLinksArr: string[] = [];
     try {
       try {
         imgLinksArr = await uploadImagesToImgur(
@@ -62,12 +63,13 @@ export function CreateInitiativeForm() {
         );
         console.log('Uploaded links:', imgLinksArr);
       } catch (uploadError) {
-        console.error("Error uploading images to Imgur:", uploadError)
+        console.error('Error uploading images to Imgur:', uploadError);
         toast({
-          title: "Error uploading images",
-          description: "Failed to upload one or more images, but continuing with initiative creation.",
-          variant: "destructive",
-        })
+          title: 'Грешка при качване на изображения',
+          description:
+            'Неуспешно качване на едно или повече изображения, но създаването на инициативата продължава.',
+          variant: 'destructive',
+        });
       }
 
       const categoriesIds = await Promise.all(
@@ -106,16 +108,16 @@ export function CreateInitiativeForm() {
       });
 
       toast({
-        title: 'The initiative was successfully created!',
-        description: 'The new initiative has been added to the system.',
+        title: 'Инициативата беше създадена успешно!',
+        description: 'Новата инициатива беше добавена в системата.',
       });
 
       router.push(`${AppLinks.INITIATIVE}/${initiative.id}`);
     } catch (error: unknown) {
       console.log(getErrorMessage(error));
       toast({
-        title: 'Error creating the initiative',
-        description: 'Please try again later.',
+        title: 'Грешка при създаване на инициативата',
+        description: 'Моля, опитайте отново по-късно.',
         variant: 'destructive',
       });
     } finally {
@@ -142,57 +144,62 @@ export function CreateInitiativeForm() {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Заглавие</FormLabel>
               <FormControl>
-                <Input placeholder="Add title to initiative" {...field} />
+                <Input
+                  placeholder="Добави заглавие на инициативата"
+                  {...field}
+                />
               </FormControl>
               <FormDescription>
-                Short and clear title of the initiative.
+                Кратко и ясно заглавие на инициативата.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="excerpt"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Excerpt</FormLabel>
+              <FormLabel>Резюме</FormLabel>
               <FormControl>
-                <Input placeholder="Add excerpt to initiative" {...field} />
+                <Input placeholder="Добави резюме на инициативата" {...field} />
               </FormControl>
               <FormDescription>
-                Short and clear excerpt of the initiative.
+                Кратко и ясно резюме на инициативата.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Описание</FormLabel>
               <FormControl className="size-[500px] flex flex-col justify-stretch gap-2">
                 <Tiptap value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormDescription>
-                Detailed description of the goals and activities of the
-                initiative.
+                Подробно описание на целите и дейностите на инициативата.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="date"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Date</FormLabel>
+                <FormLabel>Дата</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
@@ -205,7 +212,7 @@ export function CreateInitiativeForm() {
             name="time"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Time</FormLabel>
+                <FormLabel>Час</FormLabel>
                 <FormControl>
                   <Input type="time" {...field} />
                 </FormControl>
@@ -214,15 +221,16 @@ export function CreateInitiativeForm() {
             )}
           />
         </div>
+
         <FormField
           control={form.control}
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Location</FormLabel>
+              <FormLabel>Локация</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter location of the initiative"
+                  placeholder="Въведи локация на инициативата"
                   {...field}
                 />
               </FormControl>
@@ -230,19 +238,21 @@ export function CreateInitiativeForm() {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="mapEmbedUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Map</FormLabel>
+              <FormLabel>Карта</FormLabel>
               <FormControl>
-                <Input placeholder="Enter url of the map" {...field} />
+                <Input placeholder="Въведи URL адрес за картата" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="categories"
@@ -252,10 +262,17 @@ export function CreateInitiativeForm() {
               <FormControl>
                 <CategoriesInput
                   categories={field.value}
-                  setCategories={field.onChange}
-                  {...field}
+                  setCategories={(newCategories) => {
+                    field.onChange(newCategories);
+                  }}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  name={field.name}
                 />
               </FormControl>
+              <FormDescription>
+                Добавете поне една категория (минимум 3 символа)
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

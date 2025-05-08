@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const formSchema = z.object({
   title: z.string().min(5, {
@@ -37,17 +37,8 @@ export const formSchema = z.object({
     .optional()
     .or(z.literal('')),
   categories: z
-    .array(
-      z.string().min(3, {
-        message: 'The category must be at least 3 characters long.',
-      })
-    )
-    .max(4, {
-      message: 'The categories must not be longer than 4',
-    })
-    .refine((data) => data.length > 0, {
-      message: 'At least one category is required.',
-    }),
+    .array(z.string().min(3, 'Всяка категория трябва да е поне 3 символа'))
+    .min(1, 'Трябва да добавиш поне една категория'),
   // maxParticipants: z.number().min(1, {
   //   message: 'There must be at least 1 participant.',
   // }),

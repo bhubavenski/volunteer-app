@@ -69,10 +69,9 @@ export default function TasksStatus({
             </ResponsiveContainer>
           ) : (
             <div>
-              <div>There are no activity with any task</div>
+              <div>Няма активност с нито една задача</div>
               <div>
-                move some of the tasks to in-progress or done stages to get Pie
-                chart analytics
+              Преместете някои от задачите в етап „в процес“ или „завършен“, за да получите анализи на кръгова диаграма
               </div>
             </div>
           )}

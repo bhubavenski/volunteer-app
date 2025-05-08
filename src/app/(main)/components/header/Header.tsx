@@ -19,7 +19,7 @@ export default function Header() {
             <AuthWrraper role={[Role.INITIATOR, Role.ADMIN]}>
               <Link
                 href={AppLinks.CREATE_INITIATIVE}
-                className="hover:underline"
+                className="hover:underline font-bold"
               >
                 Create initiative
               </Link>
