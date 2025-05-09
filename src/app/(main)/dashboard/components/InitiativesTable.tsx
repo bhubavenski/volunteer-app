@@ -50,6 +50,8 @@ import {
   getInitiatives,
 } from '@/actions/initiatives.actions';
 import Image from 'next/image';
+import { toast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 type InitiativeWithUser = Prisma.InitiativeGetPayload<{
   include: {
@@ -253,7 +255,21 @@ export const columns: ColumnDef<InitiativeWithUser>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive"
-              onClick={() => deteleInitiative(initiative.id)}
+              onClick={async () => {
+                try {
+                  await deteleInitiative(initiative.id);
+                  toast({
+                    title: 'Успешно изтриване!',
+                    description: "Инициативата и данните свързани с нея бяха изтрити успешно",
+                  });
+                } catch (error) {
+                  toast({
+                    title: 'Грешка: инициативата не можа да бъде изтрита',
+                    description: getErrorMessage(error),
+                    variant: 'destructive',
+                  });
+                }
+              }}
             >
               Delete initiative
             </DropdownMenuItem>

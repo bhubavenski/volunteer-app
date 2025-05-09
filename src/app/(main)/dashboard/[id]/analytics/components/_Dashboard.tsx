@@ -8,7 +8,7 @@ import TasksStatus from './TasksStatus';
 import OverviewTab from './tabs/overview/OverviewTab';
 import TasksTab from './tabs/tasks/TasksTab';
 import VolunteersTab from './tabs/volunteers/VolunteersTab';
-import ImpactTab from './tabs/impact/ImpactTab';
+// import ImpactTab from './tabs/impact/ImpactTab';
 import { InitiativeData } from './types';
 
 export default async function InitiativeDashboard({
@@ -88,7 +88,7 @@ export default async function InitiativeDashboard({
             <TabsTrigger value="overview">Общ преглед</TabsTrigger>
             <TabsTrigger value="tasks">Задачи</TabsTrigger>
             <TabsTrigger value="volunteers">Доброволци</TabsTrigger>
-            <TabsTrigger value="impact">Въздействие</TabsTrigger>
+            {/* <TabsTrigger value="impact">Въздействие</TabsTrigger> */}
           </TabsList>
 
           <OverviewTab initiativeData={initiativeData} />
@@ -97,7 +97,7 @@ export default async function InitiativeDashboard({
 
           <VolunteersTab initiativeData={initiativeData} />
 
-          <ImpactTab />
+          {/* <ImpactTab /> */}
         </Tabs>
       </div>
     </div>

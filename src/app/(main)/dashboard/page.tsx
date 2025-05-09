@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Role } from '@prisma/client';
 import { UsersTable } from './components/UsersTable';
 import { InitiativesTable } from './components/InitiativesTable';
+import HTTPErrorMessage from './components/HTTPErrorMessage';
 
 export default async function page() {
   const session = await auth();
@@ -54,14 +55,27 @@ export default async function page() {
             <Plus /> Add initiative
           </Button>
           <div className="grid grid-cols-4 gap-4 mt-6 max-sm:grid-cols-1">
-            {initiatives.map((initiative) => (
-              <Link
-                href={`${AppLinks.DASHBOARD}/${initiative.id}`}
-                key={initiative.id}
-              >
-                <PersonalInitiativesView initiative={initiative} />
-              </Link>
-            ))}
+            {initiatives.length ? (
+              initiatives.map((initiative) => (
+                <Link
+                  href={`${AppLinks.DASHBOARD}/${initiative.id}`}
+                  key={initiative.id}
+                >
+                  <PersonalInitiativesView initiative={initiative} />
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-4 max-sm:col-span-1 flex justify-center items-center">
+                <HTTPErrorMessage
+                  href={AppLinks.CREATE_INITIATIVE}
+                  code="404"
+                  title="No Initiatives were found."
+                  description="Sorry, we can't find that page."
+                >
+                  <Button>Create one!</Button>
+                </HTTPErrorMessage>
+              </div>
+            )}
           </div>
         </TabsContent>
         {session.user.role === Role.ADMIN && (

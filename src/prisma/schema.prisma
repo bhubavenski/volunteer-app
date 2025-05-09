@@ -25,7 +25,7 @@ enum Priority {
   MID
   HIGH
 }
-
+  
 model User {
   id          String       @id @default(uuid())
   username    String       @unique
@@ -34,7 +34,7 @@ model User {
   firstName   String?
   lastName    String?
   role        Role
-  authored    Initiative[] @relation("InitiativeAuthor")
+  authored    Initiative[] @relation("InitiativeAuthor") //
   Task        Task[]
   profileImg  String?
   initiatives Initiative[] @relation("InitiativeParticipants") // Много към много отношение без references
@@ -46,7 +46,7 @@ model Initiative {
   description  String
   excerpt      String
   location     String
-  startDate    DateTime
+  startDate    DateTime //
   endDate      DateTime
   categories   Category[] @relation("InitiativeCategories")
   participants User[]     @relation("InitiativeParticipants") // Много към много отношение без references
@@ -55,7 +55,7 @@ model Initiative {
   tasks        Task[]
   author       User       @relation("InitiativeAuthor", fields: [userId], references: [id])
   userId       String
-  totalHours   Int?
+  totalHours   Int? //
   Sprint       Sprint[]
 }
 
@@ -106,12 +106,3 @@ model Sprint {
   initiativeId String
   tasks        Task[]
 }
-
-// model InitiativeParticipants {
-//   user         User       @relation(fields: [userId], references: [id])
-//   userId       String
-//   initiative   Initiative @relation(fields: [initiativeId], references: [id])
-//   initiativeId String
-
-//   @@id([userId, initiativeId])
-// }
