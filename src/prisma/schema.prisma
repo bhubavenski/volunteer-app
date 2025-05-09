@@ -74,7 +74,7 @@ model Task {
   createAt     DateTime   @default(now())
   assignedTo   User?      @relation(fields: [userId], references: [id])
   userId       String?
-  initiative   Initiative @relation(fields: [initiativeId], references: [id])
+  initiative   Initiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
   initiativeId String
   category     String     @default("main")
   Sprint       Sprint?    @relation(fields: [sprintId], references: [id])
@@ -83,19 +83,18 @@ model Task {
 }
 
 model InitiativePDF {
-  id                String      @id @default(uuid())
-  title             String
-  date              DateTime
-  description       String
-  organizer         String
-  location          String?   
-  contact           String?   
-  additionalInfo    String?  
+  id             String   @id @default(uuid())
+  title          String
+  date           DateTime
+  description    String
+  organizer      String
+  location       String?
+  contact        String?
+  additionalInfo String?
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
-
 
 model Sprint {
   id           String     @id @default(uuid())
@@ -103,7 +102,7 @@ model Sprint {
   description  String
   startDate    DateTime
   dueDate      DateTime
-  initiative   Initiative @relation(fields: [initiativeId], references: [id])
+  initiative   Initiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
   initiativeId String
   tasks        Task[]
 }
