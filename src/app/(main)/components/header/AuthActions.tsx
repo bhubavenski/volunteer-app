@@ -7,11 +7,13 @@ import React from 'react';
 import UserDropdownMenu from '../UserDropdownMenu';
 import { useRouter } from 'next/navigation';
 import { AppLinks } from '@/constants/AppLinks';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function AuthActions() {
   const { data, status } = useSession();
   const router = useRouter();
-  
+  const isMobile = useIsMobile();
+
   return (
     <>
       {status === 'loading' ? (
@@ -21,6 +23,8 @@ export default function AuthActions() {
           username={data.user.username}
           profileId={data.user.sub!}
         />
+      ) : isMobile ? (
+        <Button onClick={() => router.push(AppLinks.SIGN_IN)}>Sign in</Button>
       ) : (
         <>
           <Button

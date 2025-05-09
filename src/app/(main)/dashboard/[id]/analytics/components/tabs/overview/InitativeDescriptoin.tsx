@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Calendar, Users, MapPin } from 'lucide-react';
 import React from 'react';
 import { InitiativeData } from '../../types';
-import { formatDate } from '@/lib/utils';
+import { formatDate, sanitize } from '@/lib/utils';
 
 export default function InitativeDescriptoin({
   initiativeData,
@@ -15,7 +15,9 @@ export default function InitativeDescriptoin({
         <CardTitle>Описание на инициативата</CardTitle>
       </CardHeader>
       <CardContent>
-        <p>{initiativeData.description}</p>
+        <p
+          dangerouslySetInnerHTML={{ __html: sanitize(initiativeData.description) }}
+        />
         <div className="grid grid-cols-2 gap-4 mt-4">
           <div>
             <h4 className="text-sm font-medium text-muted-foreground">

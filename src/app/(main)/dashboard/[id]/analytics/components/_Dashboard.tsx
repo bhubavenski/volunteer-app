@@ -54,14 +54,13 @@ export default async function InitiativeDashboard({
   } as InitiativeData;
 
   if (!initiativeData) {
-    return <>Mne</>;
+    return <>No initiative data</>;
   }
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="flex-1 space-y-4 p-8 pt-6">
+      <div className="flex-1 space-y-4 p-8 pt-6 max-sm:p-0">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
-          {/* ok */}
           <DasboardHeader initiativeData={initiativeData} />
 
           <div className="flex space-x-2">
@@ -85,7 +84,7 @@ export default async function InitiativeDashboard({
         </div>
 
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
+          <TabsList className='max-sm:flex-col max-sm:h-auto max-sm:w-full'>
             <TabsTrigger value="overview">Общ преглед</TabsTrigger>
             <TabsTrigger value="tasks">Задачи</TabsTrigger>
             <TabsTrigger value="volunteers">Доброволци</TabsTrigger>

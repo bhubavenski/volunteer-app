@@ -11,7 +11,7 @@ export default async function layout({
 
   const { id } = await params;
   return (
-    <div className="flex gap-3">
+    <div className="flex lg:flex-row gap-3 flex-col">
       <VerticalNavbar dashboardId={id} />
 
       <div className="flex-1">{children}</div>

@@ -15,13 +15,19 @@ export default function PersonalInitiativesView({
   initiative: Initiative;
 }) {
   return (
-    <Card className="">
-      <CardHeader>
-        <CardTitle>{initiative.title}</CardTitle>
-        <CardDescription>{initiative.excerpt}</CardDescription>
+     <Card>
+      <CardHeader className="space-y-2">
+        <CardTitle className="text-lg sm:text-xl break-words line-clamp-2 hyphens-auto">
+          {initiative.title}
+        </CardTitle>
+        <CardDescription className="line-clamp-3 break-words hyphens-auto">
+          {initiative.excerpt}
+        </CardDescription>
       </CardHeader>
       <CardFooter>
-        <p>Action date: {formatDate(initiative.startDate)}</p>
+        <p className="text-sm text-muted-foreground truncate">
+          Action date: {formatDate(initiative.startDate)}
+        </p>
       </CardFooter>
     </Card>
   );

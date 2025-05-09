@@ -45,25 +45,29 @@ export function VerticalNavbar({
   return (
     <nav
       className={cn(
-        'flex h-full w-16 flex-col items-center border-r bg-background py-4',
-        className
+        "flex w-full h-16 flex-row items-center justify-between px-4 py-4 bg-background",
+        "lg:h-full lg:w-16 lg:flex-col lg:items-center lg:border-r lg:py-4 lg:px-0 lg:static",
+
+        className,
       )}
     >
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
         <span className="text-lg font-bold">ZD</span>
       </div>
-      <div className="mt-8 flex flex-col items-center gap-4">
+
+      {/* Navigation items container */}
+      <div className="flex flex-row items-center gap-4 lg:mt-8 lg:flex-col lg:items-center">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href
 
           return (
             <Button
               key={item.title}
-              variant={isActive ? 'secondary' : 'ghost'}
+              variant={isActive ? "secondary" : "ghost"}
               size="icon"
-              className={cn('h-10 w-10 rounded-full', {
-                'bg-secondary text-secondary-foreground': isActive,
-                'hover:bg-muted': !isActive,
+              className={cn("h-10 w-10 rounded-full", {
+                "bg-secondary text-secondary-foreground": isActive,
+                "hover:bg-muted": !isActive,
               })}
               asChild
             >
@@ -72,7 +76,7 @@ export function VerticalNavbar({
                 <span className="sr-only">{item.title}</span>
               </Link>
             </Button>
-          );
+          )
         })}
       </div>
     </nav>

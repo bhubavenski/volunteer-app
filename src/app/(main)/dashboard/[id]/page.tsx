@@ -195,7 +195,7 @@ export default function Page() {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="container mx-auto p-4 min-h-screen">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 max-sm:flex-col gap-2">
           <h1 className="text-3xl font-bold">Kanban Дъска</h1>
           <div className="flex space-x-2">
             <Button onClick={() => setIsCreateTaskOpen(true)}>

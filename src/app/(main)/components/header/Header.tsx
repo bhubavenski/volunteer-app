@@ -9,11 +9,15 @@ import { Role } from '@prisma/client';
 
 export default function Header() {
   return (
-    <header className="py-1 flex bg-white dark:bg-[#020713] justify-between z-10 shadow-lg sticky top-0 items-center px-6">
-      <Link href="/">
-        <AppLogo width={150} height={70} className="dark:fill-white" />
+    <header className="py-1 overflow-hidden flex bg-white dark:bg-[#020713] justify-between z-10 shadow-lg sticky top-0 items-center px-6">
+      <Link href="/" className="max-sm:hidden">
+        <AppLogo
+          width={150}
+          height={70}
+          className="dark:fill-white max-sm:hidden"
+        />
       </Link>
-      <nav className="mr-8">
+      <nav className="mr-8 max-sm:text-sm">
         <ul className="flex items-center gap-4">
           <li>
             <AuthWrraper role={[Role.INITIATOR, Role.ADMIN]}>

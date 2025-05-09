@@ -31,14 +31,19 @@ export default async function page() {
     <>
       {/* <LayoutNav /> */}
       <Tabs defaultValue="initiativeTab">
-        <TabsList className='mb-10'>
-          <TabsTrigger value="initiativeTab">Your initiatives</TabsTrigger>
+        <TabsList className="mb-10 max-sm:flex-col max-sm:h-auto max-sm:w-full">
+          <TabsTrigger value="initiativeTab" className="w-full">
+            Your initiatives
+          </TabsTrigger>
           {session.user.role === Role.ADMIN && (
             <>
-              <TabsTrigger value="administrateUsersTab">
+              <TabsTrigger value="administrateUsersTab" className="w-full">
                 Administrate users
               </TabsTrigger>
-              <TabsTrigger value="administrateInitiativesTab">
+              <TabsTrigger
+                value="administrateInitiativesTab"
+                className="w-full"
+              >
                 Administrate initiatives
               </TabsTrigger>
             </>
@@ -48,7 +53,7 @@ export default async function page() {
           <Button>
             <Plus /> Add initiative
           </Button>
-          <div className="grid grid-cols-4 gap-4 mt-6">
+          <div className="grid grid-cols-4 gap-4 mt-6 max-sm:grid-cols-1">
             {initiatives.map((initiative) => (
               <Link
                 href={`${AppLinks.DASHBOARD}/${initiative.id}`}

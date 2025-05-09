@@ -27,7 +27,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
     })) !== null;
 
   return (
-    <div className="flex items-center justify-center inset-0 p-6 relative">
+    <div className="flex items-center justify-center inset-0 p-6 max-sm:p-0 relative">
       <div className=" w-full h-full p-3 rounded-lg ">
         {hasInitiatives ? (
           <>{children}</>
@@ -39,7 +39,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
               title="No Initiatives were found."
               description="Sorry, we can't find that page."
             >
-              <Button>Hey</Button>
+              <Button>Create one!</Button>
             </HTTPErrorMessage>
           </div>
         )}

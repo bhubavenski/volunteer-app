@@ -656,7 +656,7 @@ export function InitiativePdfGenerator(): React.ReactElement {
                   )}
                 />
               </CardContent>
-              <CardFooter className="flex justify-between">
+              <CardFooter className="flex justify-between max-sm:flex-col">
                 <p className="text-sm text-muted-foreground">* Задължителни полета</p>
                 <div className="flex space-x-2">
                   <Button type="button" variant="outline" onClick={handleReset}>
