@@ -45,6 +45,7 @@ Create a `.env` file in the root directory and add the following line:
 
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+NEXTAUTH_SECRET='secret'
 NEXT_PUBLIC_IMGUR_CLIENT_ID=your_id
 ```
 
@@ -113,11 +114,32 @@ The project includes:
 - Documented API routes and models  
 - Seed data for faster project setup  
 
+Use these predefined user accounts to experience the app from various user roles and perspectives.
+```
+ {
+    username: 'user1',
+    email: 'email1@gmail.com',
+    password: '1111',
+    role: Role.USER,
+  },
+  {
+    username: 'user2',
+    email: 'email2@gmail.com',
+    password: '2222',
+    role: Role.INITIATOR,
+  },
+  {
+    username: 'user3',
+    email: 'email3@gmail.com',
+    password: '3333',
+    role: Role.ADMIN,
+  },
+```
 ## 👥 Authors
 
 This project was developed by
 
-**Boris Hubavenski**, **Vladislav Stoqnov**, **Daniel Chernev**, **Velizar georgiev**
+**Boris Hubavenski**, **Vladislav Stoqnov**, **Daniel Chernev**, **Velizar Georgiev**
 
 from the Telecommunications High School – Sofia, as part of an educational initiative to promote digital skills.
 >>>>>>> latest
